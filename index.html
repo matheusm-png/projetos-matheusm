@@ -30,11 +30,17 @@
                 <a href="#meta-ads" class="nav-item">
                     <i data-lucide="trending-up"></i> Meta Ads
                 </a>
+                <a href="#sympla" class="nav-item">
+                    <i data-lucide="ticket"></i> Sympla
+                </a>
                 <a href="#email-perf" class="nav-item">
-                    <i data-lucide="mail"></i> Email Performance
+                    <i data-lucide="mail"></i> Email
+                </a>
+                <a href="#whatsapp" class="nav-item">
+                    <i data-lucide="message-circle"></i> WhatsApp
                 </a>
                 <a href="#contacts" class="nav-item">
-                    <i data-lucide="database"></i> Base de Contatos
+                    <i data-lucide="database"></i> Base Geral
                 </a>
             </nav>
             <div class="sidebar-footer">
@@ -69,7 +75,7 @@
                             <i data-lucide="users" class="kpi-icon teal"></i>
                         </div>
                         <div class="kpi-value" id="kpi-leads">0</div>
-                        <div class="kpi-change positive">Base de contatos</div>
+                        <div class="kpi-change positive">Investimento Total</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-header">
@@ -81,28 +87,28 @@
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-header">
-                            <span class="kpi-label">Investimento Total</span>
-                            <i data-lucide="dollar-sign" class="kpi-icon indigo"></i>
+                            <span class="kpi-label">LP Views (Meta)</span>
+                            <i data-lucide="eye" class="kpi-icon indigo"></i>
                         </div>
-                        <div class="kpi-value" id="kpi-invest">R$ 0,00</div>
+                        <div class="kpi-value" id="kpi-views">0</div>
                         <div class="kpi-change">Mídia Paga</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-header">
-                            <span class="kpi-label">Total Envios</span>
+                            <span class="kpi-label">Contatos Operacionais</span>
                             <i data-lucide="send" class="kpi-icon magenta"></i>
                         </div>
                         <div class="kpi-value" id="kpi-msgs">0</div>
-                        <div class="kpi-change positive">Mensagens de Disparo</div>
+                        <div class="kpi-change positive">Total na Base</div>
                     </div>
                 </div>
 
                 <div class="charts-grid">
                     <div class="chart-container large">
                         <div class="chart-header">
-                            <h2>Evolução de Leads (Meta Ads)</h2>
+                            <h2>Visualizações da LP (Meta Ads)</h2>
                             <div class="chart-legend">
-                                <span class="legend-item"><span class="dot lp"></span> Meta Ads</span>
+                                <span class="legend-item"><span class="dot ads"></span> Landing Page View</span>
                             </div>
                         </div>
                         <div style="height: 350px; position: relative;">
@@ -111,7 +117,7 @@
                     </div>
                     <div class="chart-container small">
                         <div class="chart-header">
-                            <h2>Distribuição por Tag</h2>
+                            <h2>Distribuição por Base/Tag</h2>
                         </div>
                         <div style="height: 350px; position: relative;">
                             <canvas id="sourceDistributionChart"></canvas>
@@ -124,17 +130,41 @@
             <section id="section-meta-ads" class="content-section">
                 <div class="chart-container full-width">
                      <div class="chart-header">
-                         <h2>Performance Por Anúncio</h2>
+                         <h2>Desempenho Agrupado por Campanha</h2>
                      </div>
                      <div class="table-responsive">
                          <table class="data-table" id="table-meta">
                              <thead>
                                  <tr>
-                                     <th>Nome do Anúncio</th>
+                                     <th>Campanha</th>
                                      <th>Investimento</th>
-                                     <th>Leads</th>
-                                     <th>CPL</th>
+                                     <th>LP Views</th>
                                      <th>Cliques</th>
+                                     <th>CTR</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <!-- Data via JS -->
+                             </tbody>
+                         </table>
+                     </div>
+                </div>
+            </section>
+
+            <section id="section-sympla" class="content-section">
+                 <div class="chart-container full-width">
+                     <div class="chart-header">
+                         <h2>Gestão de Ingressos (Sympla)</h2>
+                     </div>
+                     <div class="table-responsive">
+                         <table class="data-table" id="table-sympla">
+                             <thead>
+                                 <tr>
+                                     <th>ID Pedido</th>
+                                     <th>Status</th>
+                                     <th>Valor</th>
+                                     <th>Tipo de Ingresso</th>
+                                     <th>Data</th>
                                  </tr>
                              </thead>
                              <tbody>
@@ -148,13 +178,13 @@
             <section id="section-email-perf" class="content-section">
                  <div class="chart-container full-width">
                      <div class="chart-header">
-                         <h2>Resultados Email Marketing</h2>
+                         <h2>Resultados Email (Leads vs Clientes)</h2>
                      </div>
                      <div class="table-responsive">
                          <table class="data-table" id="table-emails">
                              <thead>
                                  <tr>
-                                     <th>Base</th>
+                                     <th>Segmento</th>
                                      <th>Enviados</th>
                                      <th>Abertos</th>
                                      <th>Bounces</th>
@@ -169,10 +199,34 @@
                 </div>
             </section>
 
+            <section id="section-whatsapp" class="content-section">
+                 <div class="chart-container full-width">
+                     <div class="chart-header">
+                         <h2>Contatos no WhatsApp (Chatbot/Disparo)</h2>
+                     </div>
+                     <div class="table-responsive">
+                         <table class="data-table" id="table-whatsapp">
+                             <thead>
+                                 <tr>
+                                     <th>Cliente</th>
+                                     <th>Email</th>
+                                     <th>Tags</th>
+                                     <th>Registro</th>
+                                     <th>Canal</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <!-- Data via JS -->
+                             </tbody>
+                         </table>
+                     </div>
+                </div>
+            </section>
+
             <section id="section-contacts" class="content-section">
                  <div class="chart-container full-width">
                      <div class="chart-header">
-                         <h2>Listagem Operacional de Contatos</h2>
+                         <h2>Base Geral de Contatos</h2>
                      </div>
                      <div class="table-responsive">
                          <table class="data-table" id="table-contacts">
