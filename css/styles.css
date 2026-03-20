@@ -397,3 +397,14 @@ canvas {
 .full-width {
     grid-column: 1 / -1;
 }
+
+.badge {
+    background: var(--teal);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: 8px;
+}

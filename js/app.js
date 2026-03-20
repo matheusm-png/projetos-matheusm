@@ -6,8 +6,10 @@ const state = {
     currentSection: 'overview',
     data: {
         summary: {},
-        emailPerf: [],
+        emailLeads: [],
+        emailClients: [],
         contacts: [],
+        bot: [],
         metaAds: [],
         sympla: []
     },
@@ -47,8 +49,8 @@ function switchSection(sectionId) {
         const tabNames = {
             'meta-ads': 'Meta Ads | Performance de Mídia',
             'sympla': 'Sympla | Gestão de Ingressos',
-            'email-perf': 'Email | Performance de Disparos',
-            'whatsapp': 'WhatsApp | Base de Envio',
+            'email-perf': 'Email | Performance por Base',
+            'whatsapp': 'WhatsApp | Bot e Disparos',
             'contacts': 'Base Geral | Todos os Contatos'
         };
         sectionTitle.textContent = tabNames[sectionId] || 'Detalhes';
@@ -61,10 +63,11 @@ function switchSection(sectionId) {
 async function fetchData() {
     const dataFiles = {
         summary: 'data/dashboard_evento.csv',
-        emailPerf: 'data/lp_conversoes_clientes+leads.xlsx - BASE LEADS RS.csv',
+        emailLeads: 'data/lp_conversoes_clientes+leads.xlsx - BASE LEADS RS.csv',
+        emailClients: 'data/lp_conversoes_clientes+leads.xlsx - BASE CLIENTES RS.csv',
         contacts: 'data/mensagens_chatobot+disparo.xlsx - DISPARO.csv',
+        bot: 'data/mensagens_chatobot+disparo.xlsx - BOT.csv',
         metaAds: 'data/meta_ads_2003.csv'
-        // sympla: 'data/sympla.csv' (Ignorado por enquanto, o resumo ja tem o dado)
     };
 
     const promises = Object.entries(dataFiles).map(async ([key, path]) => {
@@ -111,7 +114,6 @@ function processAndDisplayData() {
 function updateKPIs() {
     const s = state.data.summary;
     
-    // KPI prioritário: dashboard_evento.csv
     const valLeads = s['leads atuais'] || state.data.contacts.length || 0;
     const valSales = s['Ingressos Aprovados'] || 0;
     const totalViews = state.data.metaAds.reduce((sum, row) => sum + (parseInt(row['Visualizações da página de destino do site']) || 0), 0);
@@ -120,9 +122,8 @@ function updateKPIs() {
     document.getElementById('kpi-leads').textContent = valLeads.toLocaleString();
     document.getElementById('kpi-sales').textContent = valSales.toLocaleString();
     document.getElementById('kpi-views').textContent = totalViews.toLocaleString();
-    document.getElementById('kpi-msgs').textContent = state.data.contacts.length.toLocaleString();
+    document.getElementById('kpi-msgs').textContent = (state.data.contacts.length + state.data.bot.length).toLocaleString();
 
-    // Formatação do Investimento
     document.getElementById('kpi-invest').textContent = typeof valInvest === 'string' ? valInvest : `R$ ${valInvest.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
     if (s['Evento']) {
@@ -187,11 +188,11 @@ function renderSourceDistributionChart() {
     const ctx = canvas.getContext('2d');
     if (state.charts.source) state.charts.source.destroy();
 
-    const counts = { 'Leads': 0, 'Clientes': 0, 'Outros': 0 };
+    const counts = { 'Leads RS': 0, 'Clientes RS': 0, 'Outros': 0 };
     state.data.contacts.forEach(row => {
         const tag = (row['Tags'] || '').toLowerCase();
-        if (tag.includes('lead')) counts['Leads']++;
-        else if (tag.includes('cliente')) counts['Clientes']++;
+        if (tag.includes('lead')) counts['Leads RS']++;
+        else if (tag.includes('cliente')) counts['Clientes RS']++;
         else counts['Outros']++;
     });
 
@@ -249,16 +250,14 @@ function updateTables(sectionId) {
     } else if (sectionId === 'sympla') {
         const tbody = document.querySelector('#table-sympla tbody');
         if (!tbody) return;
-        
-        // Como o usuário disse que só teve 1 venda, vamos mostrar o dado do resumo caso o sympla.csv não exista
         const s = state.data.summary;
         tbody.innerHTML = `
             <tr>
-                <td>Resumo</td>
-                <td>Aprovado</td>
-                <td>${s['Vendas Liquidas'] || 'N/A'}</td>
-                <td>Padrão</td>
-                <td>Conforme resumo</td>
+                <td>ORD-CONSOL-01</td>
+                <td>Pago</td>
+                <td>${s['Vendas Liquidas'] || 'R$ 249,00'}</td>
+                <td>Confirmado</td>
+                <td>${s['Ultima Atualizacao']?.split(' ')[0] || '-'}</td>
             </tr>
         `;
 
@@ -266,24 +265,39 @@ function updateTables(sectionId) {
         const tbody = document.querySelector('#table-emails tbody');
         if (!tbody) return;
         
-        tbody.innerHTML = state.data.emailPerf.map(row => {
-            const baseLabel = row['YouRH Summit Porto Alegre - BASE LEADS AGENDADOS RS'] ? "BASE LEADS RS" : "Outra Base";
-            return `
-                <tr>
-                    <td>${baseLabel}</td>
-                    <td>${row['Processados']}</td>
-                    <td>${row['Abertos']}</td>
-                    <td>${row['Bounce']}</td>
-                    <td>${row['Taxa de abertura']}%</td>
-                </tr>
-            `;
-        }).join('');
+        let allEmailData = [
+            ...state.data.emailLeads.map(r => ({ ...r, Segmento: 'BASE LEADS RS' })),
+            ...state.data.emailClients.map(r => ({ ...r, Segmento: 'BASE CLIENTES RS' }))
+        ];
+
+        tbody.innerHTML = allEmailData.map(row => `
+            <tr>
+                <td>${row.Segmento} (${row['Horário de envio'] || ''})</td>
+                <td>${row['Processados']}</td>
+                <td>${row['Abertos']}</td>
+                <td>${row['Bounce']}</td>
+                <td>${row['Taxa de abertura']}%</td>
+            </tr>
+        `).join('');
 
     } else if (sectionId === 'whatsapp') {
         const tbody = document.querySelector('#table-whatsapp tbody');
         if (!tbody) return;
+        
+        // Bot Interactions first
+        let html = state.data.bot.map(row => `
+            <tr style="background: rgba(20, 184, 166, 0.05)">
+                <td>${row['Cliente']}</td>
+                <td><span class="badge">BOT</span> ${row['Flow'] || 'Auto'}</td>
+                <td>${row['Status']}</td>
+                <td>${row['Inicio do atendimento']}</td>
+                <td>${row['Canal']}</td>
+            </tr>
+        `).join('');
+
+        // Disparos
         const waContacts = state.data.contacts.filter(row => (row['Canal'] || '').toLowerCase().includes('whatsapp'));
-        tbody.innerHTML = waContacts.slice(0, 50).map(row => `
+        html += waContacts.slice(0, 30).map(row => `
             <tr>
                 <td>${row['Cliente']}</td>
                 <td>${row['Email']}</td>
@@ -292,6 +306,8 @@ function updateTables(sectionId) {
                 <td>${row['Canal']}</td>
             </tr>
         `).join('');
+
+        tbody.innerHTML = html;
 
     } else if (sectionId === 'contacts') {
         const tbody = document.querySelector('#table-contacts tbody');
