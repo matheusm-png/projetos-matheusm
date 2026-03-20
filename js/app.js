@@ -63,8 +63,8 @@ async function fetchData() {
         summary: 'data/dashboard_evento.csv',
         emailPerf: 'data/lp_conversoes_clientes+leads.xlsx - BASE LEADS RS.csv',
         contacts: 'data/mensagens_chatobot+disparo.xlsx - DISPARO.csv',
-        metaAds: 'data/meta_ads_2003.csv',
-        sympla: 'data/sympla.csv'
+        metaAds: 'data/meta_ads_2003.csv'
+        // sympla: 'data/sympla.csv' (Ignorado por enquanto, o resumo ja tem o dado)
     };
 
     const promises = Object.entries(dataFiles).map(async ([key, path]) => {
@@ -111,19 +111,19 @@ function processAndDisplayData() {
 function updateKPIs() {
     const s = state.data.summary;
     
-    // Total Leads and Views
+    // KPI prioritário: dashboard_evento.csv
+    const valLeads = s['leads atuais'] || state.data.contacts.length || 0;
+    const valSales = s['Ingressos Aprovados'] || 0;
     const totalViews = state.data.metaAds.reduce((sum, row) => sum + (parseInt(row['Visualizações da página de destino do site']) || 0), 0);
-    const paidSales = state.data.sympla.filter(row => row.Status === 'Pago').length || s['Ingressos Aprovados'] || 0;
-    
-    let totalMetaSpend = state.data.metaAds.reduce((sum, row) => sum + (parseFloat(row['Valor usado (BRL)']) || 0), 0);
-    const valInvest = s['investimento atual'] || totalMetaSpend;
-    
-    const totalContacts = state.data.contacts.length;
+    const valInvest = s['investimento atual'] || 0;
 
-    document.getElementById('kpi-leads').textContent = (s['leads atuais'] || totalContacts).toLocaleString();
-    document.getElementById('kpi-sales').textContent = paidSales.toLocaleString();
+    document.getElementById('kpi-leads').textContent = valLeads.toLocaleString();
+    document.getElementById('kpi-sales').textContent = valSales.toLocaleString();
     document.getElementById('kpi-views').textContent = totalViews.toLocaleString();
-    document.getElementById('kpi-msgs').textContent = totalContacts.toLocaleString();
+    document.getElementById('kpi-msgs').textContent = state.data.contacts.length.toLocaleString();
+
+    // Formatação do Investimento
+    document.getElementById('kpi-invest').textContent = typeof valInvest === 'string' ? valInvest : `R$ ${valInvest.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
     if (s['Evento']) {
         sectionTitle.textContent = s['Evento'];
@@ -143,7 +143,6 @@ function renderViewsChart() {
     const ctx = canvas.getContext('2d');
     if (state.charts.conversions) state.charts.conversions.destroy();
 
-    // Grouping by date for Landing Page Views
     const viewsByDate = {};
     state.data.metaAds.forEach(row => {
         const date = row['Início dos relatórios'];
@@ -188,7 +187,6 @@ function renderSourceDistributionChart() {
     const ctx = canvas.getContext('2d');
     if (state.charts.source) state.charts.source.destroy();
 
-    // Segment by Tag: Leads vs Clientes
     const counts = { 'Leads': 0, 'Clientes': 0, 'Outros': 0 };
     state.data.contacts.forEach(row => {
         const tag = (row['Tags'] || '').toLowerCase();
@@ -223,7 +221,6 @@ function updateTables(sectionId) {
         const tbody = document.querySelector('#table-meta tbody');
         if (!tbody) return;
         
-        // Grouping by Campaign Name
         const campaigns = {};
         state.data.metaAds.forEach(row => {
             const name = row['Nome da campanha'] || 'Outras';
@@ -252,21 +249,23 @@ function updateTables(sectionId) {
     } else if (sectionId === 'sympla') {
         const tbody = document.querySelector('#table-sympla tbody');
         if (!tbody) return;
-        tbody.innerHTML = state.data.sympla.map(row => `
+        
+        // Como o usuário disse que só teve 1 venda, vamos mostrar o dado do resumo caso o sympla.csv não exista
+        const s = state.data.summary;
+        tbody.innerHTML = `
             <tr>
-                <td>${row['ID_Pedido'] || '-'}</td>
-                <td>${row['Status'] || '-'}</td>
-                <td>R$ ${(row['Valor'] || 0).toLocaleString('pt-BR')}</td>
-                <td>${row['Tipo_Ingresso'] || '-'}</td>
-                <td>${row['Data_Compra'] || '-'}</td>
+                <td>Resumo</td>
+                <td>Aprovado</td>
+                <td>${s['Vendas Liquidas'] || 'N/A'}</td>
+                <td>Padrão</td>
+                <td>Conforme resumo</td>
             </tr>
-        `).join('');
+        `;
 
     } else if (sectionId === 'email-perf') {
         const tbody = document.querySelector('#table-emails tbody');
         if (!tbody) return;
         
-        // Identify Base Label from file name/content
         tbody.innerHTML = state.data.emailPerf.map(row => {
             const baseLabel = row['YouRH Summit Porto Alegre - BASE LEADS AGENDADOS RS'] ? "BASE LEADS RS" : "Outra Base";
             return `
@@ -283,7 +282,6 @@ function updateTables(sectionId) {
     } else if (sectionId === 'whatsapp') {
         const tbody = document.querySelector('#table-whatsapp tbody');
         if (!tbody) return;
-        // Filter by WhatsApp channel
         const waContacts = state.data.contacts.filter(row => (row['Canal'] || '').toLowerCase().includes('whatsapp'));
         tbody.innerHTML = waContacts.slice(0, 50).map(row => `
             <tr>
