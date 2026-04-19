@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio Digital · Caminho do Dendê</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#933628',
+              pimenta: '#8B1D1D', // O Vermelho Escuro da Arte
+              gold: '#DAAA3C',
+              dark: '#1B0707',
+              beige: '#FDF7F1'
+            }
+          },
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            cordel: ['"Londrina Solid"', 'cursive'], // Fonte rústica/nordestina da arte!
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Londrina+Solid:wght@400;900&display=swap" rel="stylesheet">
+
+  <style>
+    body { background-color: #120404; color: #FDF7F1; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    .glass-effect { background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    .animate-marquee { display: flex; animation: marquee 30s linear infinite; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+  </style>
+</head>
+<body class="antialiased pb-24">
+
+<!-- Faixa Elementos Nordestinos (Marquee) da Arte -->
+<div id="top-marquee" class="sticky top-0 z-[60] w-full flex glass-effect overflow-hidden py-4 transition-all duration-500">
+  <!-- Sibling 1 -->
+  <div class="animate-marquee flex items-center shrink-0 opacity-90 drop-shadow-sm">
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+  </div>
+  <!-- Sibling 2 (Duplicate for Seamless Loop) -->
+  <div class="animate-marquee flex items-center shrink-0 opacity-90 drop-shadow-sm" aria-hidden="true">
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+    <div class="flex items-center gap-8 md:gap-10 mx-4 md:mx-5 text-brand-gold">
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 11h16v3c0 3.5-3 6-8 6s-8-2.5-8-6v-3zM2 9h20M9 5h6"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 3c-1-2-3-3-4-2M18 3s-3.5 1-6 4C9 10 5 15 3 21c5-2 10-5.5 12-8.5 2-3 3-9.5 3-9.5z"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 12c0 2.5-3 5-7 5s-8-3-11-5L8 8c2-2 5-3 8-3s4 2.5 4 5z"/><path d="M2 12l4 4"/><circle cx="16" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22V5a2 2 0 00-4 0v5a2 2 0 004 0M12 15h5a2 2 0 002-2V9M8 12H3a2 2 0 01-2-2V8"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12c0 4.5 4 8 9 8s9-3.5 9-8c0-3-2-5-4-5H7C5 7 3 9 3 12z"/><path d="M6 12h12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7 shrink-0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 5 2v4c-2 0-3-2-5-2s-3 2-5 2-3-2-5-2-3 2-5 2v-4z"/></svg>
+    </div>
+  </div>
+</div>
+
+
+<!-- Header Hero -->
+<header class="relative w-full min-h-[80vh] flex flex-col items-center justify-start overflow-hidden pt-36 pb-20">
+  <img src="assets/cardapio/Acarajé.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-40 scale-105">
+  <div class="absolute inset-0 bg-gradient-to-b from-[#120404]/90 via-[#120404]/60 to-[#120404]"></div>
+  
+  <div class="relative z-10 flex flex-col items-center px-4 text-center">
+    <img src="assets/logo.svg" alt="Logo" class="w-40 h-40 md:w-56 md:h-56 mb-8 drop-shadow-[0_10px_30px_rgba(218,170,60,0.3)]">
+    <h1 class="font-cordel uppercase text-6xl md:text-8xl text-brand-gold mb-3 tracking-widest drop-shadow-[0_5px_15px_rgba(0,0,0,1)]">
+      Caminho do Dendê
+    </h1>
+    <p class="text-brand-beige text-xs md:text-sm tracking-[0.3em] uppercase font-bold max-w-lg mb-10 opacity-90">
+      A autêntica alma da Bahia
+    </p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <span class="border border-brand-gold/30 rounded-full px-5 py-2 text-xs md:text-sm font-medium text-brand-gold/80 backdrop-blur-md">Aberto hoje até 23h</span>
+      <span class="border border-brand-gold/30 rounded-full px-5 py-2 text-xs md:text-sm font-medium text-brand-gold/80 backdrop-blur-md flex items-center gap-1">
+        ⭐ 5.0 <span class="font-cordel text-lg translate-y-[2px] ml-1">TOP</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- Navegação Flutuante -->
+<nav id="main-nav" class="sticky top-[64px] z-40 glass-effect border-b border-brand-gold/20 shadow-[0_15px_35px_rgba(0,0,0,0.4)] transition-all">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex overflow-x-auto scrollbar-none gap-8 md:justify-center items-center">
+    <a href="#cat-acaraje" class="shrink-0 text-brand-gold font-bold text-xs md:text-sm tracking-[0.15em] uppercase hover:text-white transition">Acarajés</a>
+    <a href="#cat-tapiocas" class="shrink-0 text-gray-400 font-medium text-xs md:text-sm tracking-[0.15em] uppercase hover:text-brand-gold transition">Tapiocas</a>
+    <a href="#cat-cuscuz" class="shrink-0 text-gray-400 font-medium text-xs md:text-sm tracking-[0.15em] uppercase hover:text-brand-gold transition">Cuscuz</a>
+    <a href="#cat-camarao" class="shrink-0 text-gray-400 font-medium text-xs md:text-sm tracking-[0.15em] uppercase hover:text-brand-gold transition">Especiais</a>
+    <a href="#cat-bebidas" class="shrink-0 text-gray-400 font-medium text-xs md:text-sm tracking-[0.15em] uppercase hover:text-brand-gold transition">Bebidas</a>
+  </div>
+</nav>
+
+<!-- Main Container (Editorial Grid) -->
+<main class="max-w-7xl mx-auto px-6 md:px-12 mt-16 md:mt-24 space-y-32">
+
+  <!-- ==================== Categoria ACARAJÉ ==================== -->
+  <section id="cat-acaraje" class="scroll-mt-32">
+    <!-- Título Ribbon Artesanal -->
+    <div class="flex flex-col items-center mb-12 md:mb-16 text-center">
+      <div class="relative bg-brand-pimenta px-10 py-3 transform -skew-x-6 inline-block shadow-[6px_6px_0_#DAAA3C] mb-4 border border-[#DAAA3C]/50 transition hover:-translate-y-1">
+        <h2 class="font-cordel uppercase text-5xl md:text-6xl text-brand-beige transform skew-x-6 tracking-wide drop-shadow-md">ACARAJÉS</h2>
+      </div>
+      <span class="text-brand-gold text-xs font-bold tracking-[0.3em] uppercase mt-4 block">A Realeza da Bahia</span>
+    </div>
+
+    <!-- Layout: 1 Hero Item + 2 Standard Items -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-x-12 md:gap-y-16">
+      
+      <!-- HERO ITEM -->
+      <div class="product-card group cursor-pointer lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#1A0A0A] border border-white/5 hover:border-brand-gold/30 transition duration-500 shadow-xl">
+        <div class="flex flex-col lg:flex-row h-full">
+          <div class="w-full lg:w-3/5 h-[300px] lg:h-[400px] overflow-hidden">
+            <img src="assets/cardapio/Acarajé Completo.avif" class="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition duration-700">
+          </div>
+          <div class="w-full lg:w-2/5 p-8 md:p-10 flex flex-col justify-center relative">
+            <span class="text-brand-gold text-[10px] uppercase tracking-widest font-bold mb-3 inline-block">Assinatura da Casa</span>
+            <h3 class="font-cordel uppercase tracking-wide text-4xl text-white mb-4">Acarajé Completo</h3>
+            <p class="text-gray-400 text-sm font-light leading-relaxed mb-8 border-l-2 border-brand-gold/30 pl-4">
+              O tradicional da Bahia. Bolinho de feijão fradinho frito no melhor azeite de dendê, generosamente recheado com vatapá, caruru, salada vinagrete e camarão defumado.
+            </p>
+            <div class="flex items-end justify-between mt-auto">
+              <!-- Preço em Ribbon -->
+              <span class="bg-brand-gold text-[#120404] px-4 py-1.5 font-cordel text-2xl tracking-wider transform -skew-x-6 shadow-[3px_3px_0_#FDF7F1] price-tag inline-block">
+                <span class="block transform skew-x-6">R$ 32,00</span>
+              </span>
+              <button class="bg-brand-pimenta hover:bg-red-800 text-white w-12 h-12 rounded-full flex items-center justify-center transition shadow-[0_0_15px_rgba(139,29,29,0.5)] add-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STANDARD ITEM -->
+      <div class="product-card group cursor-pointer relative flex flex-col">
+        <div class="w-full aspect-[4/5] rounded-xl overflow-hidden mb-6 bg-black relative shadow-lg">
+          <img src="assets/cardapio/Acarajé sem Camarão.avif" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+          <button class="absolute bottom-4 right-4 bg-brand-pimenta border border-white/20 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition translate-y-4 group-hover:translate-y-0 add-btn shadow-xl">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+          </button>
+        </div>
+        <div class="flex flex-col flex-1 pl-2">
+          <h3 class="font-cordel uppercase tracking-wide text-3xl text-brand-beige mb-2">Sem Camarão</h3>
+          <p class="text-gray-500 text-xs font-light leading-relaxed mb-4 flex-1">
+            Feijão fradinho, vatapá, caruru e salada vinagrete. Perfeito para restrições e alérgicos ao marisco.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+             <span class="bg-brand-gold text-[#120404] px-3 py-1 font-cordel text-xl tracking-wider transform -skew-x-6 shadow-[2px_2px_0_#FDF7F1] price-tag">
+               <span class="block transform skew-x-6">R$ 28,00</span>
+             </span>
+             <button class="lg:hidden text-white border border-white/20 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider add-btn bg-white/5">Adicionar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STANDARD ITEM -->
+      <div class="product-card group cursor-pointer relative flex flex-col">
+        <div class="w-full aspect-[4/5] rounded-xl overflow-hidden mb-6 bg-black relative shadow-lg">
+          <img src="assets/cardapio/Porção de Acarajé.avif" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+          <button class="absolute bottom-4 right-4 bg-brand-pimenta border border-white/20 text-white w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition translate-y-4 group-hover:translate-y-0 add-btn shadow-xl">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+          </button>
+        </div>
+        <div class="flex flex-col flex-1 pl-2">
+          <h3 class="font-cordel uppercase tracking-wide text-3xl text-brand-beige mb-2">Porção Mini</h3>
+          <p class="text-gray-500 text-xs font-light leading-relaxed mb-4 flex-1">
+            Dez mini bolinhos com os acompanhamentos servidos separadamente. Ideal para compartilhar na mesa.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+            <span class="bg-brand-gold text-[#120404] px-3 py-1 font-cordel text-xl tracking-wider transform -skew-x-6 shadow-[2px_2px_0_#FDF7F1] price-tag">
+               <span class="block transform skew-x-6">R$ 55,00</span>
+             </span>
+            <button class="lg:hidden text-white border border-white/20 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider add-btn bg-white/5">Adicionar</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- ==================== Categoria TAPIOCAS ==================== -->
+  <section id="cat-tapiocas" class="scroll-mt-32">
+    <!-- Título Ribbon Artesanal -->
+    <div class="flex flex-col items-center mb-12 md:mb-16 text-center">
+      <div class="relative bg-brand-gold px-10 py-3 transform skew-x-6 inline-block shadow-[-6px_6px_0_#8B1D1D] mb-4 border border-[#8B1D1D]/50 transition hover:-translate-y-1">
+        <h2 class="font-cordel uppercase text-5xl md:text-6xl text-[#120404] transform -skew-x-6 tracking-wide drop-shadow-sm">TAPIOCAS</h2>
+      </div>
+      <span class="text-brand-beige text-xs font-bold tracking-[0.3em] uppercase mt-4 block">Artesanais Premium</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <!-- Item Normal -->
+      <div class="product-card group cursor-pointer relative flex flex-col">
+        <div class="w-full aspect-[4/3] md:aspect-square rounded-xl overflow-hidden mb-6 bg-black relative border-2 border-transparent group-hover:border-brand-gold/30 transition duration-500">
+          <img src="assets/cardapio/Tapioca de Frango Cremoso.avif" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+        </div>
+        <div class="flex flex-col flex-1 text-center items-center">
+          <h3 class="font-cordel uppercase tracking-wide text-3xl text-brand-beige mb-3">Frango Cremoso</h3>
+          <p class="text-gray-500 text-xs font-light leading-relaxed max-w-[250px] mb-4">
+            Massa fininha crocante, frango desfiado temperado com queijo cremoso exclusivo.
+          </p>
+          <span class="bg-transparent border border-brand-gold text-brand-gold px-4 py-1.5 font-cordel text-xl tracking-wider transform -skew-x-6 price-tag mb-4 shadow-[2px_2px_0_#DAAA3C]">
+            <span class="block transform skew-x-6">R$ 22,00</span>
+          </span>
+          <button class="w-max bg-white/5 border border-white/20 text-white hover:bg-brand-gold hover:text-brand-dark px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.2em] transition add-btn">Adicionar</button>
+        </div>
+      </div>
+
+      <!-- Item Normal -->
+      <div class="product-card group cursor-pointer relative flex flex-col">
+        <div class="w-full aspect-[4/3] md:aspect-square rounded-xl overflow-hidden mb-6 bg-black relative border-2 border-transparent group-hover:border-brand-gold/30 transition duration-500">
+          <img src="assets/cardapio/Tapioca e Carne Seca.avif" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+        </div>
+        <div class="flex flex-col flex-1 text-center items-center">
+          <h3 class="font-cordel uppercase tracking-wide text-3xl text-brand-beige mb-3">Carne Seca com Coalho</h3>
+          <p class="text-gray-500 text-xs font-light leading-relaxed max-w-[250px] mb-4">
+            Recheio generoso desfiado no capricho com cebola roxa e manteiga de garrafa.
+          </p>
+          <span class="bg-transparent border border-brand-gold text-brand-gold px-4 py-1.5 font-cordel text-xl tracking-wider transform -skew-x-6 price-tag mb-4 shadow-[2px_2px_0_#DAAA3C]">
+            <span class="block transform skew-x-6">R$ 26,00</span>
+          </span>
+          <button class="w-max bg-white/5 border border-white/20 text-white hover:bg-brand-gold hover:text-brand-dark px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.2em] transition add-btn">Adicionar</button>
+        </div>
+      </div>
+
+      <!-- Item Normal -->
+      <div class="product-card group cursor-pointer relative flex flex-col">
+        <div class="w-full aspect-[4/3] md:aspect-square rounded-xl overflow-hidden mb-6 bg-black relative border-2 border-transparent group-hover:border-brand-gold/30 transition duration-500">
+          <img src="assets/cardapio/Dadinho de Tapioca.jpeg" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+        </div>
+        <div class="flex flex-col flex-1 text-center items-center">
+          <h3 class="font-cordel uppercase tracking-wide text-3xl text-brand-beige mb-3">Dadinhos de Tapioca</h3>
+          <p class="text-gray-500 text-xs font-light leading-relaxed max-w-[250px] mb-4">
+             Porção de quadradinhos crocantes, com exclusivo melaço de cana apimentado à parte.
+          </p>
+          <span class="bg-transparent border border-brand-gold text-brand-gold px-4 py-1.5 font-cordel text-xl tracking-wider transform -skew-x-6 price-tag mb-4 shadow-[2px_2px_0_#DAAA3C]">
+            <span class="block transform skew-x-6">R$ 29,00</span>
+          </span>
+          <button class="w-max bg-white/5 border border-white/20 text-white hover:bg-brand-gold hover:text-brand-dark px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.2em] transition add-btn">Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Categoria CUSCUZ ==================== -->
+  <section id="cat-cuscuz" class="scroll-mt-32">
+    <!-- Título Ribbon Artesanal -->
+    <div class="flex flex-col items-center mb-12 md:mb-16 text-center">
+      <div class="relative bg-brand-pimenta px-10 py-3 transform -skew-x-3 inline-block shadow-[8px_8px_0_rgba(255,255,255,0.9)] mb-4 border border-white transition hover:-translate-y-1">
+        <h2 class="font-cordel uppercase text-5xl md:text-6xl text-white transform skew-x-3 tracking-wide drop-shadow-md">CUSCUZ</h2>
+      </div>
+      <span class="text-brand-gold text-xs font-bold tracking-[0.3em] uppercase mt-4 block">Flocão Amarelinho</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+       <!-- Horizontal Layout  -->
+       <div class="product-card group cursor-pointer flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-white/10 pb-8 text-center md:text-left transition hover:bg-white/5 p-4 rounded-3xl">
+          <div class="w-40 h-40 md:w-48 md:h-48 shrink-0 rounded-full overflow-hidden border-4 border-brand-pimenta shadow-2xl">
+            <img src="assets/cardapio/Cuscuz de Carne Seca.avif" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-1000">
+          </div>
+          <div class="flex-1 flex flex-col h-full justify-between">
+            <div>
+              <h3 class="font-cordel uppercase tracking-wide text-4xl text-white mb-2">Carne Seca</h3>
+              <p class="text-gray-400 text-sm mb-4">Amarelinho no vapor, acompanhado na manteiga e coentro a gosto. Quentinho e molhadinho.</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+               <span class="text-brand-gold font-cordel text-2xl tracking-widest price-tag">R$ 28,00</span>
+               <button class="bg-brand-gold hover:bg-white text-black font-bold uppercase tracking-widest text-[10px] px-6 py-2.5 rounded-full transition add-btn shadow-md">Eu Quero!</button>
+            </div>
+          </div>
+       </div>
+
+       <!-- Horizontal Layout  -->
+       <div class="product-card group cursor-pointer flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-white/10 pb-8 text-center md:text-left transition hover:bg-white/5 p-4 rounded-3xl">
+          <div class="w-40 h-40 md:w-48 md:h-48 shrink-0 rounded-full overflow-hidden border-4 border-brand-gold shadow-2xl">
+            <img src="assets/cardapio/Cuscuz de Frango Cremoso.avif" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-1000">
+          </div>
+          <div class="flex-1 flex flex-col h-full justify-between">
+            <div>
+              <h3 class="font-cordel uppercase tracking-wide text-4xl text-white mb-2">Frango Cremoso</h3>
+              <p class="text-gray-400 text-sm mb-4">Flocão umedecido com o próprio caldo suave do frango e muito requeijão de excelente qualidade.</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+               <span class="text-brand-gold font-cordel text-2xl tracking-widest price-tag">R$ 24,00</span>
+               <button class="bg-brand-gold hover:bg-white text-black font-bold uppercase tracking-widest text-[10px] px-6 py-2.5 rounded-full transition add-btn shadow-md">Eu Quero!</button>
+            </div>
+          </div>
+       </div>
+    </div>
+  </section>
+
+  <!-- ==================== Categoria CAMARÃO ==================== -->
+  <section id="cat-camarao" class="scroll-mt-32">
+     <!-- Destaque Luxo -->
+     <div class="product-card group relative h-[500px] md:h-[600px] rounded-bl-[100px] rounded-tr-[100px] overflow-hidden shadow-[15px_15px_0_#DAAA3C] border-2 border-brand-gold mt-12 cursor-pointer">
+       <img src="assets/cardapio/Bobó de Camarão.avif" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 group-hover:opacity-100 transition duration-1000">
+       <!-- Gradient robusto para ler o texto em cima -->
+       <div class="absolute inset-0 bg-gradient-to-t from-[#120404] via-[#120404]/60 to-transparent"></div>
+       <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-16">
+          
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🔥</span>
+            <span class="text-brand-gold text-xs font-bold tracking-[0.3em] uppercase bg-black/40 px-3 py-1 rounded backdrop-blur-sm border border-brand-gold/30">Chef Especial</span>
+          </div>
+          
+          <h3 class="font-cordel uppercase text-6xl md:text-8xl text-white mb-4 drop-shadow-[0_4px_4px_rgba(139,29,29,1)]">Bobó de Camarão</h3>
+          <p class="text-gray-200 text-sm md:text-base max-w-xl leading-relaxed mb-8 drop-shadow-md border-l-4 border-brand-pimenta pl-4 bg-black/30 p-3 rounded-r-xl backdrop-blur-md">
+            Creme liso e aveludado de mandioca com camarões frescos G, azeite de dendê legítimo e leite de coco fresco. Acompanha arroz branco e farofinha premium dourada.
+          </p>
+          <div class="flex flex-col sm:flex-row sm:items-center max-w-xl justify-between gap-6">
+             <span class="bg-brand-pimenta text-white px-6 py-2 font-cordel text-4xl tracking-widest transform -skew-x-12 shadow-[4px_4px_0_#FDF7F1] price-tag inline-block">
+                <span class="block transform skew-x-12">R$ 68,00</span>
+             </span>
+             <button class="bg-brand-gold hover:bg-white text-black px-10 py-4 rounded-full font-black uppercase tracking-widest text-sm transition add-btn shadow-[0_5px_20px_rgba(218,170,60,0.5)]">
+               Adicionar Pedido
+             </button>
+          </div>
+       </div>
+     </div>
+  </section>
+
+</main>
+
+
+<!-- CTA Fixo (Sacola) -->
+<div class="fixed bottom-6 left-0 right-0 z-[80] flex justify-center pointer-events-none px-4">
+  <button id="cart-cta" class="pointer-events-auto max-w-[400px] w-full bg-brand-gold text-[#1B0707] py-4 rounded-full font-black shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 border-brand-pimenta flex justify-between items-center px-6 hover:bg-white transition active:scale-[0.98] duration-500 opacity-0 translate-y-20 pointer-events-none">
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <span id="cart-count" class="bg-brand-pimenta text-white w-8 h-8 rounded-full flex items-center justify-center font-cordel text-xl pt-0.5 shadow-inner">0</span>
+        <div id="cart-pulse" class="absolute inset-0 bg-brand-pimenta rounded-full animate-ping opacity-0"></div>
+      </div>
+      <span class="font-bold text-sm md:text-base tracking-[0.1em] uppercase block transform skew-x-[-10deg]">Meu Pedido</span>
+    </div>
+    <span id="cart-total" class="font-cordel text-2xl tracking-widest">R$ 0,00</span>
+  </button>
+</div>
+
+<!-- Botão WhatsApp Flutuante que abre o Mini-Bot -->
+<button id="whatsapp-toggle" class="fixed bottom-6 right-6 z-[70] bg-[#25D366] text-white p-4 rounded-full shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:scale-110 rotate-0 transition-all duration-300 group">
+  <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <span class="absolute right-full mr-4 bg-[#120404]/90 text-brand-gold px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">Olá! Como posso ajudar?</span>
+</button>
+
+<!-- Widget do Mini-Bot de Pré-Qualificação -->
+<div id="whatsapp-bot" class="fixed bottom-24 right-6 z-[100] w-[320px] bg-brand-beige border-t-4 border-brand-pimenta rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform translate-y-20 opacity-0 pointer-events-none transition-all duration-500 overflow-hidden font-sans">
+  <!-- Header do Bot -->
+  <div class="bg-brand-pimenta p-4 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-xl">🥥</div>
+    <div>
+      <h4 class="text-white font-bold text-sm">Concierge Dendê</h4>
+      <p class="text-white/60 text-[10px] uppercase tracking-widest">Responde em 2 min</p>
+    </div>
+  </div>
+  
+  <!-- Área de Mensagens -->
+  <div id="bot-messages" class="p-4 space-y-4 max-h-[300px] overflow-y-auto scrollbar-none bg-[#FDF7F1]">
+    <!-- Mensagem Inicial -->
+    <div class="flex gap-2 animate-fade-in">
+      <div class="w-6 h-6 rounded-full bg-brand-gold flex-shrink-0 flex items-center justify-center text-[10px]">🌴</div>
+      <div class="bg-white p-3 rounded-2xl rounded-tl-none text-xs text-gray-800 shadow-sm border border-gray-100">
+        Olá! Sou o assistente do Caminho do Dendê. Para agilizar seu contato, como posso te chamar?
+      </div>
+    </div>
+  </div>
+
+  <!-- Campo de Input -->
+  <div class="p-4 bg-white border-t border-gray-100 flex gap-2">
+    <input id="bot-input" type="text" placeholder="Digite aqui..." class="flex-1 bg-gray-50 border-none rounded-full px-4 py-2 text-xs focus:ring-1 focus:ring-brand-pimenta text-gray-800 outline-none">
+    <button id="bot-send" class="bg-brand-pimenta text-white p-2 rounded-full hover:bg-red-800 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ==================== CHECKOUT MODAL ==================== -->
+<div id="checkout-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity duration-500"></div>
+
+<!-- Bottom Sheet -->
+<div id="checkout-modal" class="fixed bottom-0 left-0 right-0 z-[100] bg-[#FDF7F1] translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col md:max-w-2xl md:mx-auto max-h-[90vh] md:max-h-[85vh] shadow-[0_-20px_50px_rgba(0,0,0,0.7)] border-t-[8px] border-brand-gold rounded-t-[30px] font-sans">
+  
+  <!-- "Pegador" do Bottom Sheet -->
+  <div class="w-full flex justify-center bg-brand-pimenta rounded-t-[22px] pt-4 pb-2 z-20">
+    <div class="w-12 h-1.5 bg-white/40 rounded-full"></div>
+  </div>
+
+  <div class="bg-brand-pimenta flex items-center justify-between px-5 pb-5 sticky top-0 z-10 shadow-md">
+    <button id="close-checkout" class="text-white font-bold flex items-center gap-2 hover:text-brand-gold transition bg-black/20 px-4 py-2 rounded-full text-xs uppercase tracking-widest border border-transparent hover:border-brand-gold active:scale-95">
+      FECHAR
+    </button>
+    <div class="font-cordel tracking-widest uppercase text-brand-gold text-3xl drop-shadow-md mt-1">Seu Pedido</div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto pb-32">
+    <!-- Lista de Itens -->
+    <div class="p-6">
+      <h3 class="text-xs font-black text-brand-pimenta uppercase tracking-widest mb-4 flex items-center gap-2"><span class="text-xl">🌶️</span> O QUE VAI ROLAR HOJE</h3>
+      <div id="checkout-items" class="space-y-4"></div>
+      
+      <div class="mt-8 pt-6 border-t-2 border-dashed border-gray-300 text-sm bg-white p-5 rounded-2xl shadow-sm">
+        <div class="flex justify-between text-gray-600 mb-3 font-medium">
+          <span>Subtotal Pratos</span>
+          <span id="checkout-subtotal" class="font-bold text-black border-b border-gray-200">R$ 0,00</span>
+        </div>
+        <div class="flex justify-between text-gray-600 mb-6 font-medium items-center">
+          <span>Motoqueiro</span>
+          <span class="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-xs shadow-sm">Somente no Whats</span>
+        </div>
+        <div class="flex justify-between text-2xl font-cordel font-black text-brand-pimenta border-t-4 border-brand-gold pt-4">
+          <span class="uppercase tracking-widest">A Pagar</span>
+          <span id="checkout-grand-total" class="tracking-widest">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dados do Cliente -->
+    <div class="p-6 bg-white/50 border-y border-gray-200">
+      <h3 class="text-xs font-black text-brand-pimenta uppercase tracking-widest mb-4 flex items-center gap-2"><span class="text-xl">🛵</span> PRA ONDE A GENTE MANDA?</h3>
+      <div class="space-y-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+        <input type="text" id="ipt-nome" placeholder="Seu Nome de Guerra (Sobrenome tb)" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm font-medium focus:border-brand-pimenta outline-none transition" required>
+        <div class="grid grid-cols-3 gap-4">
+          <input type="text" id="ipt-rua" placeholder="Rua / Avenida" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm font-medium focus:border-brand-pimenta outline-none transition col-span-2" required>
+          <input type="text" id="ipt-num" placeholder="Número" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm font-medium focus:border-brand-pimenta outline-none transition" required>
+          <input type="text" id="ipt-bairro" placeholder="Que Bairro legal?" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm font-medium focus:border-brand-pimenta outline-none transition col-span-3" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagamento -->
+    <div class="p-6">
+      <h3 class="text-xs font-black text-brand-pimenta uppercase tracking-widest mb-4 flex items-center gap-2"><span class="text-xl">💰</span> COMO VAI ACERTAR COM A GENTE?</h3>
+      <div class="space-y-3 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+        <label class="border-2 border-gray-100 rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-brand-pimenta transition has-[:checked]:border-brand-pimenta has-[:checked]:bg-red-50/50 group">
+          <input type="radio" name="pagamento" value="PIX" class="w-6 h-6 accent-brand-pimenta text-brand-pimenta" checked>
+          <div class="text-sm font-black text-gray-800">Chave PIX <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] ml-1 uppercase tracking-wider group-has-[:checked]:animate-pulse">Vira mais rápido</span></div>
+        </label>
+        <label class="border-2 border-gray-100 rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:border-brand-pimenta transition has-[:checked]:border-brand-pimenta has-[:checked]:bg-red-50/50">
+          <input type="radio" name="pagamento" value="Maquininha" class="w-6 h-6 accent-brand-pimenta text-brand-pimenta">
+          <div class="text-sm font-black text-gray-800">Manda Maquininha do Motoboy</div>
+        </label>
+        <label class="border-2 border-gray-100 rounded-xl p-4 flex flex-col gap-4 cursor-pointer hover:border-brand-pimenta transition has-[:checked]:border-brand-pimenta has-[:checked]:bg-red-50/50">
+          <div class="flex items-center gap-3">
+            <input type="radio" name="pagamento" value="Dinheiro" class="w-6 h-6 accent-brand-pimenta text-brand-pimenta">
+            <div class="text-sm font-black text-gray-800">Dinheiro Vivo na Mão</div>
+          </div>
+          <input type="text" id="ipt-troco" placeholder="Vai precisar de troco pra quanto?" class="w-full bg-gray-50 border-2 border-gray-200 rounded-lg p-3 text-sm font-bold outline-none focus:border-brand-pimenta hidden transition">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white border-t-4 border-brand-pimenta p-4 md:p-5 fixed bottom-0 left-0 right-0 z-50 md:max-w-2xl md:mx-auto shadow-[0_-15px_30px_rgba(0,0,0,0.1)]">
+      <button id="btn-whatsapp" class="w-full bg-[#25D366] text-white py-4 md:py-5 rounded-2xl font-black uppercase tracking-[0.15em] text-sm md:text-base flex justify-center items-center gap-3 hover:bg-[#20bd5a] hover:scale-[1.02] shadow-[0_5px_15px_rgba(37,211,102,0.4)] transition active:scale-[0.98]">
+        Disparar Zap Pra Cozinha 🚀
+      </button>
+  </div>
+</div>
+
+<script>
+  let cart = [];
+  const parsePrice = (priceStr) => parseFloat(priceStr.replace(/[^\d,]/g, '').replace(',', '.'));
+  const cartCta = document.getElementById('cart-cta');
+  const checkoutModal = document.getElementById('checkout-modal');
+  const checkoutItemsContainer = document.getElementById('checkout-items');
+  const fmtCurrency = val => 'R$ ' + val.toFixed(2).replace('.', ',');
+
+  function renderCheckoutItems() {
+    checkoutItemsContainer.innerHTML = '';
+    cart.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'flex justify-between items-center bg-white border border-gray-200 p-3 rounded-2xl shadow-sm';
+      el.innerHTML = `
+        <div class="flex-1 pr-2">
+          <div class="font-black text-gray-900 text-sm whitespace-nowrap overflow-hidden text-ellipsis">${item.name}</div>
+          <div class="text-brand-pimenta text-sm mt-1 font-bold tracking-wider">${fmtCurrency(item.price)}</div>
+        </div>
+        <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl p-1">
+          <button class="w-10 h-10 text-gray-500 hover:bg-white rounded font-bold shadow-sm border border-transparent hover:border-gray-200 transition btn-minus" data-id="${item.id}">-</button>
+          <span class="text-base font-black w-4 text-center text-gray-900">${item.qty}</span>
+          <button class="w-10 h-10 text-brand-pimenta hover:bg-white rounded font-bold shadow-sm border border-transparent hover:border-brand-pimenta transition btn-plus" data-id="${item.id}">+</button>
+        </div>
+      `;
+      checkoutItemsContainer.appendChild(el);
+    });
+    document.querySelectorAll('.btn-plus').forEach(b => b.addEventListener('click', () => changeQty(b.dataset.id, 1)));
+    document.querySelectorAll('.btn-minus').forEach(b => b.addEventListener('click', () => changeQty(b.dataset.id, -1)));
+  }
+
+  function changeQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if(item) {
+      item.qty += delta;
+      if(item.qty <= 0) cart = cart.filter(i => i.id !== id);
+      updateCartUI();
+      renderCheckoutItems();
+      if(cart.length === 0) closeModal();
+    }
+  }
+  
+  function updateCartUI() {
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    
+    document.getElementById('cart-count').innerText = count;
+    document.getElementById('cart-total').innerText = fmtCurrency(total);
+    document.getElementById('checkout-subtotal').innerText = fmtCurrency(total);
+    document.getElementById('checkout-grand-total').innerText = fmtCurrency(total);
+    
+    const pulse = document.getElementById('cart-pulse');
+    if(pulse) {
+      pulse.classList.remove('opacity-0');
+      setTimeout(() => pulse.classList.add('opacity-0'), 500);
+    }
+
+    if(count > 0) {
+      cartCta.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+    } else {
+      cartCta.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+    }
+  }
+
+  // Intercepta CLIQUES de Add to Cart (Instantâneo em todo o Card)
+  document.querySelectorAll('.product-card').forEach((card, index) => {
+    const productId = 'prod_' + index;
+    
+    card.addEventListener('click', () => {
+      const titleElem = card.querySelector('h3');
+      const priceElem = card.querySelector('.price-tag');
+      
+      if(!titleElem || !priceElem) return;
+      
+      const name = titleElem.innerText.trim();
+      const price = parsePrice(priceElem.innerText.trim());
+      
+      const existing = cart.find(i => i.id === productId);
+      if(existing) existing.qty++;
+      else cart.push({ id: productId, name, price, qty: 1 });
+      
+      updateCartUI();
+      
+      // Feedback visual no card
+      card.classList.add('ring-2', 'ring-brand-gold', 'scale-[1.02]');
+      setTimeout(() => card.classList.remove('ring-2', 'ring-brand-gold', 'scale-[1.02]'), 300);
+
+      cartCta.classList.add('scale-110');
+      setTimeout(() => cartCta.classList.remove('scale-110'), 200);
+    });
+  });
+
+  const checkoutOverlay = document.getElementById('checkout-overlay');
+  const checkoutModalElem = document.getElementById('checkout-modal');
+
+  cartCta.addEventListener('click', () => {
+    if(cart.length > 0) {
+      renderCheckoutItems();
+      checkoutOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      checkoutModalElem.classList.remove('translate-y-full');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  function closeModal() {
+    checkoutOverlay.classList.add('opacity-0', 'pointer-events-none');
+    checkoutModalElem.classList.add('translate-y-full');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('close-checkout').addEventListener('click', closeModal);
+  checkoutOverlay.addEventListener('click', closeModal);
+
+  document.querySelectorAll('input[name="pagamento"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      const trocoInput = document.getElementById('ipt-troco');
+      if(e.target.value === 'Dinheiro') {
+         trocoInput.classList.remove('hidden');
+         trocoInput.focus();
+      } else { 
+         trocoInput.classList.add('hidden'); 
+         trocoInput.value = ''; 
+      }
+    });
+  });
+
+  document.getElementById('btn-whatsapp').addEventListener('click', () => {
+    const nome = document.getElementById('ipt-nome').value.trim();
+    const rua = document.getElementById('ipt-rua').value.trim();
+    const num = document.getElementById('ipt-num').value.trim();
+    const bairro = document.getElementById('ipt-bairro').value.trim();
+    if(!nome || !rua || !num || !bairro) {
+      alert("Fala meu chegado(a)! Falta preencher os dados do Endereço pra motoca decolar!"); return;
+    }
+
+    const pag = document.querySelector('input[name="pagamento"]:checked').value;
+    const troco = document.getElementById('ipt-troco').value.trim();
+    
+    let msg = `*NOVO PEDIDO 🌴 BORA COMEMORAR NO DENDÊ!* 🔥\n\n`;
+    msg += `👤 Cliente: *${nome}*\n\n`;
+    msg += `*O QUE VAI ROLAR HOJE:*\n`;
+    cart.forEach(item => { msg += `> ${item.qty}x ${item.name}\n`; });
+    
+    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    msg += `\n*TOTAL:* ${fmtCurrency(total)} (Anotar frete do motoboy)\n\n`;
+    msg += `*🛵 PRA ONDE A GENTE MANDA?*\n${rua}, ${num}\nBairro: ${bairro}\n\n`;
+    msg += `*💳 COMO VAI ACERTAR?*\n${pag} ` + (troco ? `(Troco para: ${troco})` : ``);
+    
+    msg += `\n\n_Bora botar esse acarajé pra fritar no Dendê!_`;
+    
+    window.open(`https://wa.me/5547984842336?text=${encodeURIComponent(msg)}`, '_blank');
+  });
+
+  // MINI-BOT WHATSAPP LOGIC
+  const botBtn = document.getElementById('whatsapp-toggle');
+  const botWidget = document.getElementById('whatsapp-bot');
+  const botInput = document.getElementById('bot-input');
+  const botSend = document.getElementById('bot-send');
+  const botMsgs = document.getElementById('bot-messages');
+  
+  let botStep = 0;
+  let botData = { name: '', about: '' };
+
+  botBtn.addEventListener('click', () => {
+    botWidget.classList.toggle('opacity-0');
+    botWidget.classList.toggle('translate-y-20');
+    botWidget.classList.toggle('pointer-events-none');
+  });
+
+  function addBotMsg(text, type = 'bot') {
+    const div = document.createElement('div');
+    div.className = `flex gap-2 ${type === 'user' ? 'justify-end' : ''} animate-fade-in`;
+    div.innerHTML = type === 'bot' 
+      ? `<div class="w-6 h-6 rounded-full bg-brand-gold flex-shrink-0 flex items-center justify-center text-[10px]">🌴</div><div class="bg-white p-3 rounded-2xl rounded-tl-none text-xs text-gray-800 shadow-sm border border-gray-100">${text}</div>`
+      : `<div class="bg-brand-pimenta p-3 rounded-2xl rounded-tr-none text-xs text-white shadow-sm border border-brand-gold/10">${text}</div>`;
+    botMsgs.appendChild(div);
+    botMsgs.scrollTop = botMsgs.scrollHeight;
+  }
+
+  function handleBot() {
+    const val = botInput.value.trim();
+    if(!val) return;
+    addBotMsg(val, 'user');
+    botInput.value = '';
+
+    setTimeout(() => {
+      if(botStep === 0) {
+        botData.name = val;
+        addBotMsg(`Prazer em te conhecer, ${botData.name}! 😊 Qual seria seu endereço para entrega ou sua dúvida hoje?`);
+        botStep++;
+      } else if(botStep === 1) {
+        botData.about = val;
+        addBotMsg(`Entendido! Estou te levando agora mesmo para o WhatsApp para finalizarmos com um consultor humano. Até logo! 🥥🔥`);
+        setTimeout(() => {
+          let msg = `*ATENDIMENTO CONCIERGE DENDÊ* 🌴\n\n`;
+          msg += `👤 *Nome:* ${botData.name}\n`;
+          msg += `📍 *Assunto/Endereço:* ${botData.about}\n\n`;
+          msg += `_Vim pelo pré-atendimento do site._`;
+          window.open(`https://wa.me/5547984842336?text=${encodeURIComponent(msg)}`, '_blank');
+        }, 2000);
+      }
+    }, 1000);
+  }
+
+  if(botSend) botSend.addEventListener('click', handleBot);
+  if(botInput) botInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleBot(); });
+
+  window.addEventListener('scroll', () => {
+    const marquee = document.getElementById('top-marquee');
+    const nav = document.getElementById('main-nav');
+    if (window.scrollY > 10) {
+      marquee.classList.add('shadow-xl', 'bg-black/30');
+      nav.classList.add('shadow-xl', 'bg-black/30');
+    } else {
+      marquee.classList.remove('shadow-xl', 'bg-black/30');
+      nav.classList.remove('shadow-xl', 'bg-black/30');
+    }
+  });
+</script>
+</body>
+</html>

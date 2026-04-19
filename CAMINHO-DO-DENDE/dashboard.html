@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard · Caminho do Dendê</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#933628',
+              gold: '#DAAA3C',
+              dark: '#1B0707',
+              beige: '#FDF7F1',
+              surface: '#2C1210',     // Dark terroso para os cards
+              surfaceAccent: '#3F1A17', // Hover ou elementos secundários nos cards
+              border: '#4D211C',       // Linhas separadoras sutis
+              muted: '#BA9894'        // Textos leves no fundo escuro
+            },
+            red: { 700: '#933628', 800: '#7A2C21' }, 
+            gold: { 500: '#DAAA3C', 600: '#C39832' },
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0c0404; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeUp 0.3s ease-out; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tabs-container::-webkit-scrollbar { display: none; }
+    .tabs-container { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Smooth scroll behavior */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="text-brand-beige min-h-screen pb-10">
+
+<div class="max-w-[480px] mx-auto bg-brand-dark min-h-screen shadow-2xl relative border-x border-brand-surface border-opacity-50">
+
+  <!-- Header -->
+  <div class="bg-gradient-to-br from-brand-red to-[#5c2118] text-white px-5 py-5 pb-4 relative overflow-hidden">
+    <!-- Efeito visual no header -->
+    <div class="absolute -right-6 -top-6 w-32 h-32 bg-brand-gold opacity-10 rounded-full blur-2xl"></div>
+    <div class="absolute right-5 top-5 w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center cursor-pointer text-xl hover:bg-white/20 transition">
+      ☰
+    </div>
+    <div class="flex items-center gap-3 mb-1 relative z-10">
+      <img src="assets/logo.svg" alt="Logo Caminho do Dendê" class="h-12 w-auto drop-shadow-md rounded-full shadow-lg border-2 border-[#5c2118]">
+      <h1 class="text-xl font-black tracking-tight leading-tight text-brand-beige drop-shadow-sm">Caminho<br>do Dendê</h1>
+    </div>
+    <div id="dynamic-date" class="text-xs text-brand-beige/80 mt-1 font-medium tracking-wide relative z-10">PAINEL GERENCIAL</div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <nav class="tabs-container flex overflow-x-auto bg-brand-dark border-b border-brand-border px-2 sticky top-0 z-50 shadow-md">
+    <button class="tab-btn active px-4 py-3.5 text-sm font-bold whitespace-nowrap border-b-[3px] border-brand-gold text-brand-gold transition" data-tab="home">Início</button>
+    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="financeiro">Financeiro</button>
+    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="vendas">Vendas</button>
+    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="marketing">Marketing</button>
+    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="operacao">Operação</button>
+  </nav>
+
+  <!-- ============ PAGE: HOME ============ -->
+  <main class="page active p-5" id="page-home">
+    
+    <div class="mb-5 flex justify-between items-end">
+      <div>
+        <h2 class="text-2xl font-black text-brand-beige tracking-tight">Boa tarde! 🌞</h2>
+        <p class="text-sm text-brand-muted mt-1 font-medium">Veja como está rodando a casa hoje.</p>
+      </div>
+      <button class="bg-brand-surfaceAccent text-brand-beige border border-brand-border px-3 py-1.5 rounded-full text-xs font-bold hover:bg-brand-red transition">Atualizar</button>
+    </div>
+
+    <!-- Caixa Principal (Fechamento) -->
+    <div class="bg-gradient-to-br from-[#2E3C2B] to-[#1E281C] border border-[#3A4D36] text-white rounded-2xl p-6 mb-4 shadow-xl shadow-black/50">
+      <div class="flex justify-between items-center mb-2">
+        <div class="text-[11px] uppercase tracking-widest text-[#B4D0AD] font-bold">Caixa de Ontem (Consolidado)</div>
+        <div class="bg-green-800 text-white text-[10px] px-2 py-0.5 rounded flex items-center font-bold">Válido</div>
+      </div>
+      <div class="text-4xl font-black tracking-tighter text-[#EBF4E9]">R$ 1.847,30</div>
+      <div class="text-xs text-[#B4D0AD] opacity-95 mt-2 flex items-center gap-1.5 font-medium">
+        <span class="bg-green-500/20 px-1.5 py-0.5 rounded text-[10px] text-green-300">▲ 12%</span> vs. sexta passada
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/30 shadow-md">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Pedidos em Andamento</div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <div class="text-2xl font-bold text-brand-beige">47</div>
+          <div class="text-[11px] text-brand-gold font-bold">● 6 na cozinha</div>
+        </div>
+      </div>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/30 shadow-md">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Receita Estimada Hoje</div>
+        <div class="text-2xl font-bold text-brand-beige mt-1">R$ 2.110</div>
+        <div class="text-[10px] text-brand-gold/70 mt-0.5 font-bold">Até o momento</div>
+      </div>
+    </div>
+
+    <!-- Alertas de Inteligência -->
+    <div class="mb-6">
+      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">👀 Fique de Olho</h3>
+      
+      <!-- Alerta Padrão Negativo -->
+      <div class="bg-[#3D1E1B] border border-[#5E2B25] rounded-xl p-3.5 mb-2 flex gap-3 shadow-md shadow-black/40">
+        <div class="text-red-400 text-lg">⚠️</div>
+        <div>
+          <strong class="block text-red-200 text-sm font-bold">Pico de Gasto com Embalagens</strong>
+          <span class="text-xs text-red-100/70 mt-0.5 block">Sua média mensal é R$ 800, e já estamos em R$ 750 no dia 18. Avaliar fornecedor!</span>
+        </div>
+      </div>
+      
+      <!-- Alerta Operacional -->
+      <div class="bg-[#212738] border border-[#303952] rounded-xl p-3.5 flex gap-3 shadow-md shadow-black/40">
+        <div class="text-blue-400 text-lg">💡</div>
+        <div>
+          <strong class="block text-blue-200 text-sm font-bold">Notas de compras travadas no Whats</strong>
+          <span class="text-xs text-blue-100/70 mt-0.5 block flex justify-between items-center">
+            3 notas paradas na IA.
+            <button class="bg-blue-600/50 hover:bg-blue-600 border border-blue-500 text-white rounded text-[10px] px-2 font-bold py-0.5 ml-2 transition">Aprovar agora</button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico Diário Evolução -->
+    <div class="mb-6">
+      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Ritmo dos 7 Dias</h3>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 pt-4 shadow-black/40 shadow-md">
+        <div id="homeChart" class="w-full h-[180px]"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============ PAGE: FINANCEIRO ============ -->
+  <main class="page p-5" id="page-financeiro">
+    <div class="mb-5">
+      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Financeiro do Mês</h2>
+      <p class="text-sm text-brand-muted mt-1 font-medium">Fluxo de caixa limpo nos tons de dendê.</p>
+    </div>
+
+    <!-- Cartão Dourado Terroso -->
+    <div class="bg-gradient-to-br from-[#775A22] to-[#403010] border border-[#8C6B26] text-white rounded-2xl p-6 mb-5 shadow-xl shadow-black/50">
+      <div class="flex justify-between items-center mb-2">
+        <div class="text-[11px] uppercase tracking-widest text-brand-beige/80 font-bold">Saldo Livre em Caixa (Lucro)</div>
+        <div class="bg-black/30 border border-white/10 text-white text-[10px] px-2 py-0.5 rounded font-bold">Meta: R$ 12k</div>
+      </div>
+      <div class="text-4xl font-black tracking-tighter text-brand-beige">R$ 10.110</div>
+      <div class="mt-4 w-full bg-black/40 rounded-full h-1.5 border border-black/20">
+        <div class="bg-brand-gold h-1.5 rounded-full" style="width: 84%"></div>
+      </div>
+      <div class="text-[10px] text-brand-beige/70 mt-1.5 text-right font-bold">84% da meta mensal</div>
+    </div>
+
+    <!-- Divisão Analítica de Caixa -->
+    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Onde está o dinheiro?</h3>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Dinheiro / PIX</div>
+        <div class="text-lg font-black text-[#8BB97B] mt-0.5">R$ 8.420</div>
+      </div>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">A Receber (APPs)</div>
+        <div class="text-lg font-black text-[#8BA4B9] mt-0.5">R$ 12.310</div>
+      </div>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Despesas Pagas</div>
+        <div class="text-lg font-black text-[#D47C70] mt-0.5">R$ 10.620</div>
+      </div>
+      <div class="bg-[#3D1E1B] border border-[#5E2B25] rounded-xl p-3.5 shadow-md shadow-black/30">
+        <div class="text-[10px] text-[#F3A59A] uppercase tracking-widest font-bold">Contas a Vencer</div>
+        <div class="text-lg font-black text-[#F3A59A] mt-0.5 mb-1">- R$ 1.830</div>
+        <div class="text-[9px] text-[#D47C70] font-bold">Luz e Equipe (Dia 20)</div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-end mb-3">
+      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold">Extrato Recente</h3>
+      <button class="text-xs font-bold text-brand-gold hover:underline">Baixar PDF</button>
+    </div>
+    
+    <div class="bg-brand-surface rounded-xl shadow-black/40 shadow-md border border-brand-border overflow-hidden divide-y divide-brand-border">
+      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-[#1e2a1b] text-[#8BB97B] flex justify-center items-center font-black border border-[#2d4029]">↓</div>
+          <div>
+            <div class="font-bold text-sm text-brand-beige">Venda Diária - iFood</div>
+            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Hoje · 14h22</div>
+          </div>
+        </div>
+        <div class="font-black text-sm text-[#8BB97B]">+ R$ 684,00</div>
+      </div>
+      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-[#3d1e1b] text-[#D47C70] flex justify-center items-center font-black border border-[#5e2b25]">↑</div>
+          <div>
+            <div class="font-bold text-sm text-brand-beige">Atacadão - Carnes</div>
+            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Ontem · Via IA</div>
+          </div>
+        </div>
+        <div class="font-black text-sm text-[#D47C70]">− R$ 487,30</div>
+      </div>
+      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-[#3d1e1b] text-[#D47C70] flex justify-center items-center font-black border border-[#5e2b25]">↑</div>
+          <div>
+            <div class="font-bold text-sm text-brand-beige">Neoenergia</div>
+            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Segunda</div>
+          </div>
+        </div>
+        <div class="font-black text-sm text-[#D47C70]">− R$ 1.830,00</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ PAGE: VENDAS ============ -->
+  <main class="page p-5" id="page-vendas">
+    <div class="mb-5">
+      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Comercial & Vendas</h2>
+      <p class="text-sm text-brand-muted mt-1 font-medium">Cardápio e Canais na palma da mão.</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-black/40 border border-brand-border rounded-xl p-4 shadow-black/50 shadow-lg">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Tickets do Mês</div>
+        <div class="text-3xl font-black text-brand-gold mt-1">1.284</div>
+        <div class="text-[11px] text-brand-muted mt-1 font-bold">Ticket Médio: <span class="text-[#8BB97B]">R$ 54,00</span></div>
+      </div>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/40 shadow-sm flex flex-col justify-center">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold mb-2">Picos de Atividade</div>
+        <div class="w-full h-11 flex items-end gap-1">
+          <div class="w-1/4 bg-brand-border h-1/4 rounded-t-sm"></div>
+          <div class="w-1/4 bg-[#D47C70] h-full rounded-t-sm" title="Meio-dia"></div>
+          <div class="w-1/4 bg-brand-red h-5/6 rounded-t-sm" title="Noite"></div>
+          <div class="w-1/4 bg-brand-border h-2/6 rounded-t-sm"></div>
+        </div>
+        <div class="flex justify-between mt-1 text-[9px] text-brand-muted font-bold">
+          <span>Manhã</span><span>Noite</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canais -->
+    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Ranking de Canais</h3>
+    <div class="space-y-2 mb-6">
+      <!-- iFood -->
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[#c51c1c] text-white flex justify-center items-center font-black">IF</div>
+          <div>
+            <div class="font-bold text-sm text-brand-beige">Aplicativo iFood</div>
+            <div class="text-[10px] font-medium text-brand-muted uppercase tracking-wider mt-0.5">340 pedidos</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="font-black text-sm text-brand-beige">R$ 18.520</div>
+          <div class="text-[10px] font-bold text-[#8BB97B] bg-[#1e2a1b] border border-[#2d4029] px-1.5 rounded mt-0.5">45% do total</div>
+        </div>
+      </div>
+      <!-- Site -->
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-gold text-brand-dark flex justify-center items-center text-lg font-black shadow-inner">🌐</div>
+          <div>
+            <div class="font-bold text-sm text-brand-beige">Site Próprio (Caminho)</div>
+            <div class="text-[10px] font-medium text-brand-muted uppercase tracking-wider mt-0.5">125 pedidos</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="font-black text-sm text-brand-beige">R$ 8.110</div>
+          <div class="text-[10px] font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/30 px-1.5 rounded mt-0.5">Alta margem</div>
+        </div>
+      </div>
+      <!-- Balcão/Zap -->
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-2 px-3 shadow-md flex justify-between items-center">
+          <span class="text-[11px] font-bold text-brand-muted">🏠 Salão</span>
+          <span class="text-xs font-black text-brand-beige">R$ 9.1k</span>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-2 px-3 shadow-md flex justify-between items-center">
+          <span class="text-[11px] font-bold text-[#8BB97B]">💬 Zap</span>
+          <span class="text-xs font-black text-brand-beige">R$ 4.2k</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engenharia -->
+    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Engenharia de Cardápio</h3>
+    <div class="space-y-3">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-sm">🌟</span><span class="text-xs font-bold text-brand-gold">Pratos Estrela (Alto Lucro)</span>
+        </div>
+        <div class="bg-[#3D331A] border border-[#5E4D21] rounded-xl p-3 flex justify-between items-center shadow-md shadow-black/40">
+          <div><div class="font-bold text-sm text-brand-beige">#1 Moqueca Especial</div><div class="text-[10px] text-brand-muted mt-0.5">Custo R$ 18 · Revenda R$ 62</div></div>
+          <div class="text-xs font-black text-[#5E4D21] bg-brand-gold px-2.5 rounded-full py-0.5 shadow-sm">70% Margem</div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-sm">⚠️</span><span class="text-xs font-bold text-[#D47C70]">Avaliar Retirada ou Precificação</span>
+        </div>
+        <div class="bg-[#2C1210] border border-[#5E2B25] rounded-xl p-3 flex justify-between items-center shadow-md shadow-black/40">
+          <div><div class="font-bold text-sm text-brand-beige">Camarão ao Alho</div><div class="text-[10px] text-[#D47C70]/80 mt-0.5">Baixo giro · Custa freezer</div></div>
+          <button class="text-[10px] font-bold text-brand-beige border border-[#D47C70] bg-[#5E2B25] hover:bg-brand-red px-2.5 rounded-lg py-1.5 shadow-sm transition">Pausar Prato</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ PAGE: MARKETING ============ -->
+  <main class="page p-5" id="page-marketing">
+    <div class="mb-5">
+      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Investimento Meta</h2>
+      <p class="text-sm text-brand-muted mt-1 font-medium">Os anúncios virando vendas.</p>
+    </div>
+
+    <!-- Bloco ROI Gigante Escuro -->
+    <div class="bg-black border border-brand-surface rounded-2xl p-1 shadow-2xl mb-6 relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute -right-10 -top-20 w-52 h-52 bg-brand-red opacity-30 blur-[60px] rounded-full pointer-events-none"></div>
+      <div class="absolute -left-10 -bottom-20 w-52 h-52 bg-brand-gold opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
+      
+      <div class="relative bg-gradient-to-tr from-[#1B0707] to-[#2C1210] p-5 rounded-[12px] border border-brand-surfaceAccent">
+        <div class="flex justify-between items-start mb-2">
+          <div class="text-[11px] uppercase tracking-widest text-brand-gold font-bold">Retorno do Dinheiro (ROI)</div>
+          <div class="bg-green-900/40 border border-green-500/30 text-green-400 text-[10px] px-2 py-0.5 rounded font-black tracking-wide">BATENDO META</div>
+        </div>
+        <div class="text-5xl font-black text-brand-beige tracking-tighter mt-1 mb-2">3,2×</div>
+        <div class="text-[11px] text-brand-muted font-bold leading-relaxed">Cada <span class="text-brand-gold">R$ 1,00</span> colocado no Instagram voltou <span class="text-brand-gold">R$ 3,20</span> reais para o restaurante.</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md text-center">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Meta Ads (PAGO)</div>
+        <div class="text-xl font-black text-brand-beige mt-1">42%</div>
+        <div class="text-[10px] text-brand-muted mt-0.5 font-bold border-t border-dashed mt-2 pt-1 border-brand-border">Gasto Atual: <strong class="text-[#D47C70]">R$ 680</strong></div>
+      </div>
+      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md text-center">
+        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Google (ORGÂNICO)</div>
+        <div class="text-xl font-black text-brand-beige mt-1">58%</div>
+        <div class="text-[10px] text-brand-muted mt-0.5 font-bold border-t border-dashed mt-2 pt-1 border-brand-border">E boca à boca</div>
+      </div>
+    </div>
+
+    <!-- Acionaveis Marketing -->
+    <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-md mb-6">
+      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3 border-b border-brand-border pb-2">Central dos Criativos Ativos</h3>
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-brand-beige">Vídeo da Moqueca (Reels)</span>
+            <span class="bg-[#3D1E1B] text-[#D47C70] border border-[#5E2B25] text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm">Fogo Alto🔥</span>
+          </div>
+          <div class="flex justify-between text-[11px] text-brand-muted border-l-2 border-brand-red pl-2 ml-1 font-medium">
+            <span>Custo da mensagem: R$ 1,50</span>
+            <span class="font-bold text-brand-gold">154 cliques</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-brand-muted opacity-70">Foto da Fachada (Estático)</span>
+            <span class="bg-[#212121] text-gray-500 border border-gray-700 text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm">Pausado ⏸️</span>
+          </div>
+          <div class="flex justify-between text-[11px] text-brand-muted opacity-70 border-l-2 border-[#4D211C] pl-2 ml-1 font-medium">
+            <span>Custo muito alto: R$ 8,20</span>
+            <span class="font-bold text-[#D47C70]">Desativado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ PAGE: OPERACAO ============ -->
+  <main class="page p-5" id="page-operacao">
+    <div class="mb-5 flex justify-between items-center">
+      <div>
+        <h2 class="text-2xl font-black text-brand-beige tracking-tight">Cozinha Viva</h2>
+        <p class="text-sm text-brand-muted mt-1 font-medium">Gestão da fila de preparo.</p>
+      </div>
+      <div class="flex items-center gap-2">
+         <span class="text-[10px] font-bold text-brand-gold uppercase">No ar</span>
+         <div class="w-2.5 h-2.5 bg-[#8BB97B] rounded-full animate-pulse shadow-[0_0_8px_#8BB97B]"></div>
+      </div>
+    </div>
+
+    <!-- Toggle Operacional Terroso -->
+    <div class="flex p-1 bg-black/30 rounded-lg mb-6 border border-brand-border">
+      <button class="flex-1 bg-brand-surface shadow-md rounded-md py-1.5 text-xs font-bold text-brand-beige border border-brand-surfaceAccent">Todos (8)</button>
+      <button class="flex-1 py-1.5 text-xs font-bold text-brand-muted hover:text-brand-beige transition">iFood (3)</button>
+      <button class="flex-1 py-1.5 text-xs font-bold text-brand-muted hover:text-brand-beige transition">Balcão/Site (5)</button>
+    </div>
+
+    <!-- Cozinha -->
+    <h3 class="text-xs uppercase tracking-widest text-[#D4AA3C] font-bold mb-3 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-[#D4AA3C]"></div> Queimando na Panela</h3>
+    <div class="space-y-3 mb-6">
+      <div class="bg-brand-surface border-l-4 border-[#D4AA3C] border-y border-r border-brand-border rounded-r-xl p-3 shadow-md relative overflow-hidden group">
+        <!-- Acão de Arrastar ficticia -->
+        <div class="absolute right-0 top-0 bottom-0 w-20 bg-[#6b8c5e] flex items-center justify-center translate-x-full group-hover:-translate-x-0 transition-transform cursor-pointer shadow-inner border-l border-[#536e49]">
+          <span class="text-white text-[10px] font-black uppercase text-center px-2">PRONTO ↓</span>
+        </div>
+        <div class="flex justify-between items-start mb-2">
+          <div class="font-black text-sm text-brand-beige">#2847 - Mariana Silva</div>
+          <div class="text-[10px] font-black text-[#D47C70] uppercase tracking-widest w-12 text-right">18 min</div>
+        </div>
+        <div class="text-xs text-brand-muted mb-2 font-medium">
+          1x Vatapá Especial G<br>
+          2x Refrigerante Guarana Lata
+        </div>
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-brand-surfaceAccent">
+          <span class="bg-[#c51c1c]/20 border border-[#c51c1c]/40 text-[#f58b8b] text-[9px] font-bold uppercase rounded px-2 py-0.5 tracking-wider">iFood · R$ 85,00</span>
+          <button class="text-[10px] font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/30 hover:bg-brand-gold hover:text-brand-dark px-3 py-1 rounded transition">Despachar Moto</button>
+        </div>
+      </div>
+
+      <div class="bg-brand-surface border-l-4 border-[#D4AA3C] border-y border-r border-brand-border rounded-r-xl p-3 shadow-md relative">
+        <div class="flex justify-between items-start mb-2">
+          <div class="font-black text-sm text-brand-beige">#2848 - Cliente Balcão</div>
+          <div class="text-[10px] font-black text-brand-gold uppercase tracking-widest w-12 text-right">06 min</div>
+        </div>
+        <div class="text-xs text-brand-muted mb-2 font-medium">
+          2x Acarajé no prato s/ pimenta
+        </div>
+        <div class="flex items-center justify-between mt-2 pt-2 border-t border-brand-surfaceAccent">
+          <span class="bg-[#E6C663]/20 border border-[#E6C663]/40 text-[#E6C663] text-[9px] font-bold uppercase rounded px-2 py-0.5 tracking-wider">Mesa 04 · R$ 36,00</span>
+          <button class="text-[10px] font-bold text-brand-beige bg-brand-surfaceAccent border border-brand-border hover:bg-brand-red px-3 py-1 rounded transition">Gritar Senha</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rota -->
+    <h3 class="text-xs uppercase tracking-widest text-[#8BA4B9] font-bold mb-3 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-[#8BA4B9]"></div> Motoboys Girando</h3>
+    <div class="space-y-3">
+      <div class="bg-[#1C202B] border-l-4 border-[#8BA4B9] border-y border-r border-[#2A3141] rounded-r-xl p-3 shadow-md opacity-70 hover:opacity-100 transition">
+        <div class="flex justify-between items-start mb-1">
+          <div class="font-bold text-sm text-brand-beige line-through decoration-brand-muted/50">#2842 - Lucas B.</div>
+          <div class="text-[9px] font-black text-[#5C7892] uppercase tracking-widest">Rotas: Zé</div>
+        </div>
+        <div class="flex items-center justify-between mt-2">
+          <span class="text-[10px] text-[#A6BCD1] font-medium">Bairro Boa Vista, R. João XVIII</span>
+          <button class="text-[10px] font-black text-[#1e2a1b] bg-[#8BB97B] hover:bg-green-400 px-3 py-1 rounded border border-[#6b8c5e] shadow-sm transition">✔ Resolvido</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="mt-8 text-center text-[10px] font-bold uppercase tracking-widest text-brand-muted/50 pb-10">
+    Caminho do Dendê - Gestão Premium
+  </footer>
+</div>
+
+<script>
+  // Navegação Tabs
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.classList.remove('active', 'border-brand-gold', 'text-brand-gold');
+        t.classList.add('border-transparent', 'text-brand-muted');
+      });
+      btn.classList.add('active', 'border-brand-gold', 'text-brand-gold');
+      btn.classList.remove('border-transparent', 'text-brand-muted');
+      
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ApexCharts Dark Mode Earthy
+  var options = {
+    series: [{ name: 'Receita Diária', data: [900, 1100, 1600, 1200, 2400, 3100] }],
+    chart: { type: 'area', height: 180, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+    colors: ['#DAAA3C'], // Gold
+    fill: { 
+      type: 'gradient', 
+      gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.02, stops: [0, 100] } 
+    },
+    dataLabels: { enabled: false },
+    stroke: { curve: 'smooth', width: 3 },
+    xaxis: { 
+      categories: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Hoje'], 
+      axisBorder: { show: false }, 
+      axisTicks: { show: false }, 
+      labels: { style: { colors: '#BA9894', fontSize: '10px', fontWeight: 600 } } 
+    },
+    yaxis: { show: false }, 
+    grid: { borderColor: '#4D211C', strokeDashArray: 4, yaxis: { lines: { show: true } } },
+    tooltip: { theme: 'dark' }
+  };
+  new ApexCharts(document.querySelector("#homeChart"), options).render();
+
+  // Data Dinâmica no Topo
+  const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+  const hoje = new Date();
+  document.getElementById('dynamic-date').innerHTML = `PAINEL GERENCIAL · ${dias[hoje.getDay()]}, ${hoje.getDate()} ${meses[hoje.getMonth()]}`;
+</script>
+</body>
+</html>
