@@ -112,12 +112,12 @@
 </div>
 
 <!-- Header Hero -->
-<header class="relative w-full min-h-[80vh] flex flex-col items-center justify-start overflow-hidden pt-36 pb-20">
+<header class="relative w-full min-h-[450px] md:min-h-[550px] flex flex-col items-center justify-start overflow-hidden pt-20 pb-16">
   <img src="assets/cardapio/acaraje.jpeg" class="absolute inset-0 w-full h-full object-cover opacity-40 scale-105">
   <div class="absolute inset-0 bg-gradient-to-b from-[#120404]/90 via-[#120404]/60 to-[#120404]"></div>
   
   <div class="relative z-10 flex flex-col items-center px-4 text-center">
-    <img src="assets/logo-oficial.png" alt="Logo" class="w-48 h-48 md:w-64 md:h-64 mb-8 drop-shadow-[0_10px_30px_rgba(218,170,60,0.5)]">
+    <img src="assets/logo-oficial.png" alt="Logo" class="w-36 h-36 md:w-48 md:h-48 mb-6 drop-shadow-[0_10px_30px_rgba(218,170,60,0.5)]">
     <h1 class="font-cordel uppercase text-6xl md:text-8xl text-brand-gold mb-3 tracking-widest drop-shadow-[0_5px_15px_rgba(0,0,0,1)]">
       Caminho do Dendê
     </h1>
@@ -480,12 +480,17 @@ Sex à Dom: 12h às 23h</p>
         </a>
       </div>
       
-      <!-- Placeholder Mapa (ou iframe real) -->
-      <div class="h-[400px] md:h-[500px] rounded-[50px] overflow-hidden border-8 border-white shadow-2xl relative group">
+      <!-- Mapa Otimizado (Mais Rápido) -->
+      <div class="h-[400px] md:h-[500px] rounded-[50px] overflow-hidden border-8 border-white shadow-2xl relative group bg-gray-100">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3728.324546452188!2d-49.3875!3d-20.8125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94bdad4595e8494b%3A0x6b45e14b2b2b2b2b!2sRua%20Eug%C3%AAnio%20Crotti%2C%20288%20-%20Jardim%20Alto%20Rio%20Preto%2C%20S%C3%A3o%20Jos%C3%A9%20do%20Rio%20Preto%20-%20SP%2C%2015020-220!5e0!3m2!1spt-BR!2sbr!4v1713480000000!5m2!1spt-BR!2sbr" 
             width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            title="Localização Caminho do Dendê"
             class="filter grayscale group-hover:grayscale-0 transition duration-1000"></iframe>
+          <!-- Overlay de loading para feedback instantâneo -->
+          <div class="absolute inset-0 pointer-events-none flex items-center justify-center opacity-0 group-hover:opacity-10 transition">
+             <div class="bg-white/80 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-brand-dark shadow-xl">Carregando Mapa...</div>
+          </div>
       </div>
     </div>
   </section>
