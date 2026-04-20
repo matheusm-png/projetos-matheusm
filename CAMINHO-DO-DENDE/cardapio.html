@@ -164,8 +164,8 @@
       
       <!-- HERO ITEM -->
       <div class="product-card group cursor-pointer lg:col-span-2 relative overflow-hidden rounded-2xl bg-[#1A0A0A] border border-white/5 hover:border-brand-gold/30 transition duration-500 shadow-xl">
-        <div class="flex flex-col lg:flex-row h-full">
-          <div class="w-full lg:w-3/5 h-[300px] lg:h-[400px] overflow-hidden">
+        <div class="flex flex-col lg:flex-row min-h-full">
+          <div class="w-full lg:w-3/5 min-h-[300px] lg:min-h-full overflow-hidden">
             <img src="assets/cardapio/acaraje-completo.avif" class="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition duration-700">
           </div>
           <div class="w-full lg:w-2/5 p-8 md:p-10 flex flex-col justify-center relative">
@@ -311,7 +311,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
        <!-- Horizontal Layout  -->
        <div class="product-card group cursor-pointer flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-white/10 pb-8 text-center md:text-left transition hover:bg-white/5 p-4 rounded-3xl">
-          <div class="w-40 h-40 md:w-48 md:h-48 shrink-0 rounded-full overflow-hidden border-4 border-brand-pimenta shadow-2xl">
+          <div class="w-40 h-40 md:w-64 md:h-64 lg:w-72 lg:h-72 shrink-0 rounded-full overflow-hidden border-4 border-brand-pimenta shadow-2xl">
             <img src="assets/cardapio/cuscuz-de-carne-seca.avif" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-1000">
           </div>
           <div class="flex-1 flex flex-col h-full justify-between">
@@ -328,7 +328,7 @@
 
        <!-- Horizontal Layout  -->
        <div class="product-card group cursor-pointer flex flex-col md:flex-row items-center md:items-start gap-6 border-b border-white/10 pb-8 text-center md:text-left transition hover:bg-white/5 p-4 rounded-3xl">
-          <div class="w-40 h-40 md:w-48 md:h-48 shrink-0 rounded-full overflow-hidden border-4 border-brand-gold shadow-2xl">
+          <div class="w-40 h-40 md:w-64 md:h-64 lg:w-72 lg:h-72 shrink-0 rounded-full overflow-hidden border-4 border-brand-gold shadow-2xl">
             <img src="assets/cardapio/cuscuz-de-frango-cremoso.avif" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-1000">
           </div>
           <div class="flex-1 flex flex-col h-full justify-between">
@@ -375,6 +375,108 @@
      </div>
   </section>
 
+  <!-- ==================== Categoria BEBIDAS ==================== -->
+  <section id="cat-bebidas" class="scroll-mt-32">
+    <div class="flex items-center gap-4 mb-16 mt-32">
+      <div class="h-px flex-1 bg-gradient-to-r from-transparent to-brand-gold/30"></div>
+      <h2 class="font-cordel text-5xl md:text-7xl text-brand-gold uppercase tracking-[0.2em]">Bebidas</h2>
+      <div class="h-px flex-1 bg-gradient-to-l from-transparent to-brand-gold/30"></div>
+    </div>
+
+    <style>
+      .drink-card { position:relative; border-radius:28px; overflow:hidden; cursor:pointer; transition:transform .3s ease, box-shadow .3s ease; }
+      .drink-card:hover { transform: translateY(-8px); }
+      .drink-card:hover .drink-can { transform: translateY(-10px) scale(1.08); filter: drop-shadow(0 24px 32px var(--glow)); }
+      .drink-card:hover .drink-glow { opacity:0.5; transform:scale(1.2); }
+      .drink-can { transition: transform .4s cubic-bezier(.34,1.56,.64,1), filter .4s ease; filter: drop-shadow(0 12px 20px var(--glow)); }
+      .drink-glow { position:absolute; border-radius:50%; filter:blur(40px); opacity:0.25; transition:opacity .4s, transform .4s; pointer-events:none; }
+      .drink-reflection { width:60%; height:20px; margin:0 auto -6px; border-radius:50%; opacity:0.15; filter:blur(8px); }
+    </style>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+
+      <!-- Coca-Cola -->
+      <div class="drink-card product-card group" style="--glow:rgba(234,29,44,0.7); background:linear-gradient(160deg,#2a0a0a 0%,#1a0505 60%,#0d0202 100%); border:1px solid rgba(234,29,44,0.25); box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+        <div style="padding:32px 20px 16px; position:relative; text-align:center;">
+          <div class="drink-glow" style="background:#EA1D2C; width:140px; height:140px; top:10px; left:50%; transform:translateX(-50%);"></div>
+          <img src="assets/cardapio/coca-cola-lata.png" class="drink-can" style="height:140px; width:auto; margin:0 auto; display:block; position:relative; z-index:1;" alt="Coca-Cola">
+          <div class="drink-reflection" style="background:#EA1D2C; margin-top:8px;"></div>
+        </div>
+        <div style="padding:4px 20px 24px; text-align:center; position:relative; z-index:1;">
+          <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(234,29,44,0.4),transparent); margin-bottom:14px;"></div>
+          <h3 class="font-black text-white uppercase tracking-tight" style="font-size:15px; line-height:1.2; margin-bottom:4px;">Coca-Cola</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Lata 350ml</p>
+          <div class="price-tag font-cordel" style="font-size:26px; color:#DAAA3C; letter-spacing:2px; margin-bottom:14px;">R$ 8,00</div>
+          <button class="add-btn" style="width:100%; background:rgba(234,29,44,0.2); border:1px solid rgba(234,29,44,0.5); color:white; padding:10px; border-radius:14px; font-weight:800; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='#EA1D2C'" onmouseout="this.style.background='rgba(234,29,44,0.2)'">Eu Quero!</button>
+        </div>
+      </div>
+
+      <!-- Coca-Cola Zero -->
+      <div class="drink-card product-card group" style="--glow:rgba(40,40,40,0.9); background:linear-gradient(160deg,#181818 0%,#0f0f0f 60%,#080808 100%); border:1px solid rgba(255,255,255,0.1); box-shadow:0 10px 40px rgba(0,0,0,0.6);">
+        <div style="padding:32px 20px 16px; position:relative; text-align:center;">
+          <div class="drink-glow" style="background:#888; width:140px; height:140px; top:10px; left:50%; transform:translateX(-50%);"></div>
+          <img src="assets/cardapio/coca-cola-zero-lata.png" class="drink-can" style="height:140px; width:auto; margin:0 auto; display:block; position:relative; z-index:1;" alt="Coca-Cola Zero">
+          <div class="drink-reflection" style="background:#aaa; margin-top:8px;"></div>
+        </div>
+        <div style="padding:4px 20px 24px; text-align:center; position:relative; z-index:1;">
+          <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent); margin-bottom:14px;"></div>
+          <h3 class="font-black text-white uppercase tracking-tight" style="font-size:15px; line-height:1.2; margin-bottom:4px;">Coca-Cola Zero</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Lata 350ml</p>
+          <div class="price-tag font-cordel" style="font-size:26px; color:#DAAA3C; letter-spacing:2px; margin-bottom:14px;">R$ 8,00</div>
+          <button class="add-btn" style="width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.2); color:white; padding:10px; border-radius:14px; font-weight:800; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">Eu Quero!</button>
+        </div>
+      </div>
+
+      <!-- Guaraná Antarctica -->
+      <div class="drink-card product-card group" style="--glow:rgba(0,120,50,0.7); background:linear-gradient(160deg,#0a1f10 0%,#061408 60%,#030a04 100%); border:1px solid rgba(0,150,60,0.25); box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+        <div style="padding:32px 20px 16px; position:relative; text-align:center;">
+          <div class="drink-glow" style="background:#00843D; width:140px; height:140px; top:10px; left:50%; transform:translateX(-50%);"></div>
+          <img src="assets/cardapio/guarana-antarctica-lata.png" class="drink-can" style="height:140px; width:auto; margin:0 auto; display:block; position:relative; z-index:1;" alt="Guaraná Antarctica">
+          <div class="drink-reflection" style="background:#00843D; margin-top:8px;"></div>
+        </div>
+        <div style="padding:4px 20px 24px; text-align:center; position:relative; z-index:1;">
+          <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(0,150,60,0.4),transparent); margin-bottom:14px;"></div>
+          <h3 class="font-black text-white uppercase tracking-tight" style="font-size:15px; line-height:1.2; margin-bottom:4px;">Guaraná Antarctica</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Lata 350ml</p>
+          <div class="price-tag font-cordel" style="font-size:26px; color:#DAAA3C; letter-spacing:2px; margin-bottom:14px;">R$ 8,00</div>
+          <button class="add-btn" style="width:100%; background:rgba(0,132,61,0.2); border:1px solid rgba(0,132,61,0.5); color:white; padding:10px; border-radius:14px; font-weight:800; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='#00843D'" onmouseout="this.style.background='rgba(0,132,61,0.2)'">Eu Quero!</button>
+        </div>
+      </div>
+
+      <!-- Guaraná Zero -->
+      <div class="drink-card product-card group" style="--glow:rgba(80,180,80,0.6); background:linear-gradient(160deg,#0d1f0d 0%,#081408 60%,#040a04 100%); border:1px solid rgba(80,180,80,0.2); box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+        <div style="padding:32px 20px 16px; position:relative; text-align:center;">
+          <div class="drink-glow" style="background:#50b450; width:140px; height:140px; top:10px; left:50%; transform:translateX(-50%);"></div>
+          <img src="assets/cardapio/guarana-zero-lata.png" class="drink-can" style="height:140px; width:auto; margin:0 auto; display:block; position:relative; z-index:1;" alt="Guaraná Zero">
+          <div class="drink-reflection" style="background:#50b450; margin-top:8px;"></div>
+        </div>
+        <div style="padding:4px 20px 24px; text-align:center; position:relative; z-index:1;">
+          <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(80,180,80,0.35),transparent); margin-bottom:14px;"></div>
+          <h3 class="font-black text-white uppercase tracking-tight" style="font-size:15px; line-height:1.2; margin-bottom:4px;">Guaraná Zero</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Lata 350ml</p>
+          <div class="price-tag font-cordel" style="font-size:26px; color:#DAAA3C; letter-spacing:2px; margin-bottom:14px;">R$ 8,00</div>
+          <button class="add-btn" style="width:100%; background:rgba(80,180,80,0.15); border:1px solid rgba(80,180,80,0.4); color:white; padding:10px; border-radius:14px; font-weight:800; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='rgba(80,180,80,0.4)'" onmouseout="this.style.background='rgba(80,180,80,0.15)'">Eu Quero!</button>
+        </div>
+      </div>
+
+      <!-- Sprite -->
+      <div class="drink-card product-card group" style="--glow:rgba(0,180,80,0.7); background:linear-gradient(160deg,#0a2010 0%,#061508 60%,#030c04 100%); border:1px solid rgba(0,180,80,0.25); box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+        <div style="padding:32px 20px 16px; position:relative; text-align:center;">
+          <div class="drink-glow" style="background:#00B850; width:140px; height:140px; top:10px; left:50%; transform:translateX(-50%);"></div>
+          <img src="assets/cardapio/sprite-350ml.png" class="drink-can" style="height:140px; width:auto; margin:0 auto; display:block; position:relative; z-index:1;" alt="Sprite">
+          <div class="drink-reflection" style="background:#00B850; margin-top:8px;"></div>
+        </div>
+        <div style="padding:4px 20px 24px; text-align:center; position:relative; z-index:1;">
+          <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(0,180,80,0.4),transparent); margin-bottom:14px;"></div>
+          <h3 class="font-black text-white uppercase tracking-tight" style="font-size:15px; line-height:1.2; margin-bottom:4px;">Sprite</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.35); font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px;">Lata 350ml</p>
+          <div class="price-tag font-cordel" style="font-size:26px; color:#DAAA3C; letter-spacing:2px; margin-bottom:14px;">R$ 8,00</div>
+          <button class="add-btn" style="width:100%; background:rgba(0,184,80,0.2); border:1px solid rgba(0,184,80,0.5); color:white; padding:10px; border-radius:14px; font-weight:800; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s;" onmouseover="this.style.background='#00B850'" onmouseout="this.style.background='rgba(0,184,80,0.2)'">Eu Quero!</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
 </main>
 
 

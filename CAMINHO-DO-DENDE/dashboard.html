@@ -3,518 +3,2152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard · Caminho do Dendê</title>
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              red: '#933628',
-              gold: '#DAAA3C',
-              dark: '#1B0707',
-              beige: '#FDF7F1',
-              surface: '#2C1210',     // Dark terroso para os cards
-              surfaceAccent: '#3F1A17', // Hover ou elementos secundários nos cards
-              border: '#4D211C',       // Linhas separadoras sutis
-              muted: '#BA9894'        // Textos leves no fundo escuro
-            },
-            red: { 700: '#933628', 800: '#7A2C21' }, 
-            gold: { 500: '#DAAA3C', 600: '#C39832' },
-          }
-        }
-      }
-    }
-  </script>
-
+  <title>Painel Gerencial · Caminho do Dendê</title>
+  <meta name="description" content="Dashboard gerencial interno do Caminho do Dendê.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Londrina+Solid:wght@400;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0c0404; }
-    .page { display: none; }
-    .page.active { display: block; animation: fadeUp 0.3s ease-out; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* ══════════════════════════════════════════
+       TOKENS & BASE DA MARCA (Caminho do Dendê)
+    ═════════════════════════════════════════ */
+    :root {
+      --red:        #933628;
+      --red-deep:   #8B1D1D;
+      --gold:       #DAAA3C;
+      --gold-light: #f0c84a;
+      --dark:       #120404;
+      --surface:    rgba(18, 4, 4, 0.85); /* Premium glass background */
+      --s2:         #1A0A0A; /* Solid dark panels */
+      --s3:         rgba(218, 170, 60, 0.05); /* Premium hover */
+      --border:     rgba(218, 170, 60, 0.15); /* Gold outline over dark */
+      --beige:      #FDF7F1;
+      --muted:      #D4B5B0;
+      --green:      #5eab52;
+      --green-s:    #8BB97B;
+      --red-a:      #D47C70;
+      --sidebar-w:  250px;
     }
-    .tabs-container::-webkit-scrollbar { display: none; }
-    .tabs-container { -ms-overflow-style: none; scrollbar-width: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--dark); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     
-    /* Smooth scroll behavior */
-    html { scroll-behavior: smooth; }
+    /* ── LAYOUT ── */
+    body { font-family: 'Inter', sans-serif; background: var(--dark) url('assets/cardapio/acaraje.jpeg') no-repeat center center fixed; background-size: cover; color: var(--beige); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    #shell { display: flex; min-height: 100vh; background: rgba(18, 4, 4, 0.94); backdrop-filter: blur(10px); }
+
+       /* ── SIDEBAR ── */
+    #sidebar { width: var(--sidebar-w); background: rgba(18, 4, 4, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-right: 1px solid rgba(218,170,60,0.15); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform 0.3s ease; overflow-y: auto; }
+    .sidebar-brand { padding: 36px 20px 24px; border-bottom: 1px solid rgba(218,170,60,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; flex-shrink: 0; text-align: center; }
+    .brand-icon-img { width: 90px; height: 90px; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(218,170,60,0.4)); margin-bottom: 4px; }
+    .brand-name { font-family: 'Londrina Solid', cursive; font-size: 36px; line-height: 1; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 4px 12px rgba(0,0,0,0.8); }
+    .brand-sub  { font-size: 9px; color: var(--beige); font-weight: 800; letter-spacing: 3px; text-transform: uppercase; opacity: 0.8; }
+
+    .sidebar-nav { flex: 1; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-label { font-size: 12px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); padding: 18px 12px 6px; font-family: 'Londrina Solid', cursive; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; cursor: pointer; color: var(--beige); font-size: 13px; font-weight: 600; border: none; background: none; font-family: 'Inter', sans-serif; width: 100%; text-align: left; transition: all 0.2s ease; opacity: 0.75; }
+    .nav-item:hover { opacity: 1; background: rgba(218,170,60,0.08); transform: translateX(4px); }
+    .nav-item.active { opacity: 1; background: linear-gradient(90deg, rgba(218,170,60,0.2) 0%, rgba(218,170,60,0) 100%); color: var(--gold); border-left: 4px solid var(--gold); border-radius: 0 14px 14px 0; font-weight: 800; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-item .badge-new { margin-left: auto; background: var(--green); color: white; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 100px; }
+
+    .sidebar-footer { padding: 14px 10px; border-top: 1px solid rgba(218,170,60,0.15); flex-shrink: 0; }
+    .date-pill { background: rgba(0,0,0,0.4); border: 1px solid rgba(218,170,60,0.15); border-radius: 12px; padding: 12px 14px; font-size: 11px; color: var(--muted); font-weight: 600; line-height: 1.5; backdrop-filter: blur(8px); }
+    .date-pill strong { display: block; color: var(--gold); font-size: 12px; margin-bottom: 2px; }color: var(--muted); font-weight: 600; line-height: 1.5; backdrop-filter: blur(8px); }
+    .date-pill strong { display: block; color: var(--beige); font-size: 12px; margin-bottom: 1px; }
+
+    /* ── CONTENT ── */
+    #content { margin-left: var(--sidebar-w); flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+    #content::before { content:''; position:fixed; top:0; left:30%; width:50vw; height:50vh; background: radial-gradient(circle, rgba(147,54,40,0.1) 0%, rgba(0,0,0,0) 70%); z-index:-1; pointer-events:none; }
+
+    /* ── TOPBAR ── */
+    #topbar { background: rgba(18, 4, 4, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(218,170,60,0.15); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
+    .topbar-title { font-family: 'Londrina Solid', cursive; font-size: 38px; line-height: 1; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; drop-shadow: 0 4px 6px rgba(0,0,0,0.8); }
+    .topbar-sub { font-size: 12px; color: var(--beige); font-weight: 600; margin-top: 4px; letter-spacing: 1px; opacity: 0.8; }
+    .topbar-actions { display: flex; gap: 12px; align-items: center; }
+
+    /* ── FILTRO DE DATA ── */
+    .filter-bar { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-bar label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); white-space: nowrap; }
+    .filter-pill-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .f-pill { padding: 8px 16px; border-radius: 100px; border: 1px solid var(--border); background: var(--s2); color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .2s; backdrop-filter: blur(8px); }
+    .f-pill:hover { border-color: rgba(218,170,60,0.5); color: var(--beige); transform: translateY(-2px); }
+    .f-pill.sel { background: var(--gold); border-color: var(--gold); color: #120404; box-shadow: 0 4px 16px rgba(218,170,60,0.4); }
+    .filter-divider { width: 1px; height: 20px; background: var(--border); }
+    .filter-bar select { background: var(--s2); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; color: var(--beige); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; }
+    .filter-bar select:focus { border-color: var(--gold); }
+    .filter-bar select option { background: var(--s2); }
+
+    /* ── PAGES ── */
+    .page { display: none; padding: 22px 24px; animation: fadeUp 0.25s ease-out; }
+    .page.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── GRIDS ── */
+    .cols-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 18px; }
+    .cols-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 18px; }
+    .cols-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+    .cols-5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 18px; }
+    .col-span-2 { grid-column: span 2; }
+    .col-span-3 { grid-column: span 3; }
+
+    /* ── TYPOGRAPHY ── */
+    .page-title { font-family: 'Londrina Solid', cursive; font-size: 56px; line-height: 1; color: var(--gold); margin-bottom: 8px; text-shadow: 0 4px 12px rgba(218,170,60,0.3); letter-spacing: 2px; text-transform: uppercase; }
+    .page-sub   { font-size: 14px; color: var(--muted); font-weight: 500; margin-bottom: 32px; letter-spacing: 0.5px; }
+    .section-lbl { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* ── STAT CARDS ── */
+    .stat-card { background: linear-gradient(160deg, #1A0A0A 0%, var(--dark) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 20px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.4); transition: transform 0.3s, border-color 0.3s; }
+    .stat-card:hover { transform: translateY(-4px); border-color: rgba(218,170,60,0.4); }
+    .stat-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; }
+    .stat-val { font-family: 'Londrina Solid', cursive; font-size: 48px; line-height: 1; letter-spacing: 2px; margin-bottom: 4px; color: var(--gold); text-shadow: 0 2px 10px rgba(218, 170, 60, 0.2); }
+    .stat-sub { font-size: 11px; font-weight: 600; color: var(--muted); }
+    .stat-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 6px; margin-top: 4px; }
+    .delta-up   { background: rgba(94,171,82,.15); color: var(--green-s); }
+    .delta-down { background: rgba(212,124,112,.15); color: var(--red-a); }
+
+    .stat-hero { background: linear-gradient(160deg, #1A0A0A 0%, var(--dark) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 24px; padding: 32px; position: relative; overflow: hidden; box-shadow: 0 16px 50px rgba(0,0,0,0.5); border: 1px solid var(--border); transition: transform 0.3s; }
+    .stat-hero:hover { transform: translateY(-4px); }
+    .stat-hero::before { content: ''; position: absolute; right:-20px; top:-20px; width: 120px; height: 120px; border-radius: 50%; background: rgba(218,170,60,0.05); filter: blur(2px); }
+    .hero-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 6px; }
+    .hero-val { font-family: 'Londrina Solid', cursive; font-size: 64px; line-height: 0.9; margin-bottom: 8px; text-shadow: 0 4px 16px rgba(0,0,0,0.5); letter-spacing: 2px; color: var(--gold); }
+    .hero-sub { font-size: 12px; font-weight: 600; opacity: 0.75; }
+
+    .g-green { background: linear-gradient(135deg, rgba(46,60,43,0.8), rgba(30,40,28,0.8)); border-color: rgba(94,171,82,0.3); box-shadow: 0 8px 32px rgba(94,171,82,0.15); }
+    .g-gold  { background: linear-gradient(135deg, rgba(82,18,18,0.8), rgba(27,7,7,0.9)); border-color: rgba(218,170,60,0.4); box-shadow: 0 8px 32px rgba(218,170,60,0.15); }
+    .g-red   { background: linear-gradient(135deg, rgba(147,54,40,0.8), rgba(92,33,24,0.9)); border-color: rgba(147,54,40,0.5); box-shadow: 0 8px 32px rgba(147,54,40,0.25); }
+    .g-blue  { background: linear-gradient(135deg, rgba(28,32,43,0.8), rgba(20,23,32,0.8)); border-color: rgba(139,164,185,0.3); box-shadow: 0 8px 32px rgba(139,164,185,0.15); }
+    .g-purple{ background: linear-gradient(135deg, rgba(42,28,60,0.8), rgba(26,16,38,0.8)); border-color: rgba(167,139,250,0.3); box-shadow: 0 8px 32px rgba(167,139,250,0.15); }
+
+    /* ── PROGRESS ── */
+    .prog-track { background: rgba(0,0,0,0.4); border-radius:100px; height:6px; margin-top:10px; }
+    .prog-fill  { height:6px; border-radius:100px; background:var(--gold); transition:width 0.8s cubic-bezier(.4,0,.2,1); }
+    .prog-text  { font-size:10px; font-weight:700; opacity:0.7; text-align:right; margin-top:4px; }
+
+    /* ── CHANNEL ROW ── */
+    .channel-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    .channel-row:last-child { border-bottom: none; }
+    .channel-row:hover { background: var(--s3); }
+    .ch-icon { width: 36px; height: 36px; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:12px; flex-shrink:0; margin-right:12px; }
+    .ch-name  { font-size:13px; font-weight:700; }
+    .ch-count { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+    .ch-val   { font-size:14px; font-weight:900; text-align:right; }
+    .ch-pct   { font-size:10px; font-weight:700; text-align:right; margin-top:2px; }
+
+    /* ── BADGE ── */
+    .badge { display:inline-block; padding:2px 8px; border-radius:100px; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+    .b-green { background:rgba(94,171,82,.15); border:1px solid rgba(94,171,82,.3); color:var(--green-s); }
+    .b-gold  { background:rgba(218,170,60,.12); border:1px solid rgba(218,170,60,.3); color:var(--gold); }
+    .b-red   { background:rgba(212,124,112,.15); border:1px solid rgba(212,124,112,.3); color:var(--red-a); }
+    .b-blue  { background:rgba(139,164,185,.15); border:1px solid rgba(139,164,185,.3); color:#8BA4B9; }
+    .b-purple{ background:rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.3); color:#a78bfa; }
+
+    /* ── EXTRATO ── */
+    .extrato-item { display:flex; align-items:center; justify-content:space-between; padding:11px 16px; border-bottom:1px solid var(--border); transition:background .15s; }
+    .extrato-item:last-child { border-bottom:none; }
+    .extrato-item:hover { background:var(--s3); }
+    .ext-dot { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-right:10px; }
+    .ext-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:280px; }
+    .ext-meta { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; }
+    .ext-val  { font-size:14px; font-weight:900; flex-shrink:0; margin-left:12px; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 14px; }
+    .form-lbl { display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:5px; }
+    .form-input, .form-select { width:100%; background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:10px 13px; color:var(--beige); font-family:'Inter',sans-serif; font-size:13px; font-weight:600; outline:none; transition:border-color .2s, box-shadow .2s; -webkit-appearance:none; }
+    .form-input:focus, .form-select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(218,170,60,.1); }
+    .form-input::placeholder { color:var(--muted); font-weight:400; }
+    .form-select option { background:var(--s2); }
+    .big-wrap { background:var(--s2); border:2px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:8px; }
+    .big-wrap:focus-within { border-color:var(--gold); }
+    .big-prefix { font-size:18px; font-weight:900; color:var(--muted); }
+    .big-input { flex:1; background:none; border:none; outline:none; font-family:'Inter',sans-serif; font-size:26px; font-weight:900; color:var(--beige); letter-spacing:-1px; width:100%; }
+    .big-input::placeholder { color:var(--border); }
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+    .pill-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .pill { padding:8px 16px; border-radius:100px; border:1px solid var(--border); background:var(--s2); color:var(--muted); font-size:11px; font-weight:700; text-transform: uppercase; letter-spacing: 1px; cursor:pointer; font-family:'Inter',sans-serif; transition:all .2s; }
+    .pill:hover { border-color: rgba(218,170,60,0.5); transform: translateY(-2px); }
+    .pill.sel { background:var(--gold); border-color:var(--gold); color:#1B0707; box-shadow: 0 4px 16px rgba(218,170,60,0.4); }
+    .btn-primary { background:var(--gold); color:#1B0707; border:none; border-radius:100px; padding:14px 28px; font-family:'Inter',sans-serif; text-transform: uppercase; font-size:12px; font-weight:900; cursor:pointer; letter-spacing:2px; transition:all .3s ease; display:inline-flex; align-items:center; gap:8px; box-shadow: 0 6px 20px rgba(218,170,60,0.3); }
+    .btn-primary:active { transform:scale(0.96); }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow: 0 8px 24px rgba(218,170,60,0.5); background:#FDF7F1; }
+    .btn-primary.full { width:100%; justify-content:center; }
+    .btn-sm { background:var(--s2); border:1px solid var(--border); color:var(--beige); border-radius:8px; padding:6px 12px; font-size:11px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s; }
+    .btn-sm:hover { background:var(--s3); }
+    .btn-sm.gold { background:var(--gold); color:#1B0707; border-color:var(--gold); }
+    .btn-ghost { background:var(--s2); color:var(--beige); border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-family:'Inter',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:background .15s; }
+    .btn-ghost:hover { background:var(--s3); }
+
+    /* ── CAIXA / METAS ── */
+    .caixa-row { display:flex; justify-content:space-between; align-items:center; padding:11px 16px; border-bottom:1px solid var(--border); }
+    .caixa-row:last-child { border-bottom:none; }
+    .c-lbl { font-size:13px; font-weight:600; color:var(--muted); }
+    .c-val { font-family: 'Londrina Solid', cursive; font-size:24px; letter-spacing: 1px; font-weight:900; }
+    .meta-block { background:var(--s2); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:10px; }
+    .meta-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+    .meta-nm { font-size:13px; font-weight:800; }
+    .meta-pr { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; }
+    .meta-cur { font-family: 'Londrina Solid', cursive; font-size:32px; font-weight:900; letter-spacing:1px; }
+    .divider { height:1px; background:var(--border); margin:18px 0; }
+
+    /* ── MODAL ── */
+    .modal-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:300; align-items:center; justify-content:center; }
+    .modal-ov.open { display:flex; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:26px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; animation:zoomIn .25s ease-out; }
+    @keyframes zoomIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+    .modal-title { font-size:19px; font-weight:900; margin-bottom:4px; }
+    .modal-sub   { font-size:12px; color:var(--muted); margin-bottom:18px; }
+
+    /* ── TOAST ── */
+    #toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--green); color:white; font-weight:800; font-size:13px; padding:11px 22px; border-radius:100px; opacity:0; transition:all .3s cubic-bezier(.4,0,.2,1); z-index:400; white-space:nowrap; pointer-events:none; box-shadow:0 8px 32px rgba(0,0,0,.4); }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── EMPTY ── */
+    .empty { text-align:center; padding:36px 20px; color:var(--muted); }
+    .empty .ico { font-size:32px; margin-bottom:10px; }
+    .empty p { font-size:13px; line-height:1.6; }
+
+    /* ── BOTTOM NAV ── */
+    #bottom-nav { display: none; position: fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); z-index:100; padding-bottom:env(safe-area-inset-bottom,0); }
+    .bnav-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:9px 4px 7px; background:none; border:none; cursor:pointer; color:var(--muted); font-family:'Inter',sans-serif; gap:3px; transition:color .2s; }
+    .bnav-btn.active { color:var(--gold); }
+    .bnav-btn svg { width:20px; height:20px; }
+    .bnav-btn span { font-size:8px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+
+    /* ── MOBILE HEADER ── */
+    #mobile-header { display: none; background: rgba(18, 4, 4, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(218,170,60,0.15); padding: 14px 16px; position: sticky; top: 0; z-index: 95; }
+    .mh-row { display:flex; align-items:center; gap:14px; }
+    .mh-icon-img { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(218,170,60,0.4)); flex-shrink: 0; }
+    .mh-title { font-size:26px; line-height:0.9; color:var(--gold); font-family: 'Londrina Solid', cursive; text-transform: uppercase; letter-spacing: 1px; drop-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    .mh-sub { font-size:9px; color:var(--beige); font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-top:2px; opacity: 0.8; }
+
+    /* ── CARD BOX ── */
+    .card-box { background: linear-gradient(160deg, rgba(26,10,10,0.95) 0%, rgba(18,4,4,0.95) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(218,170,60,0.15); border-radius: 24px; overflow: hidden; margin-bottom: 32px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); transition: border-color 0.3s; }
+    .card-box:hover { border-color: rgba(218,170,60,0.4); }
+    .card-box-pad { padding: 28px; }
+    .card-box-hdr { padding: 20px 24px; border-bottom: 1px solid rgba(218,170,60,0.15); font-size: 26px; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; color: var(--beige); font-family: 'Londrina Solid', cursive; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, rgba(139,29,29,0.5) 0%, rgba(18,4,4,0) 100%); }
+
+    /* ── TABLES ── */
+    .tbl { width:100%; border-collapse:collapse; font-size:12px; }
+    .tbl th { padding:9px 14px; text-align:left; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); border-bottom:1px solid var(--border); white-space:nowrap; }
+    .tbl td { padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600; }
+    .tbl tr:last-child td { border-bottom:none; }
+    .tbl tr:hover td { background:var(--s3); }
+
+    /* ── WEEK CARDS ── */
+    .week-card { background:var(--s2); border:1px solid var(--border); border-radius:12px; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .week-lbl { font-size:13px; font-weight:800; margin-bottom:3px; }
+    .week-sub { font-size:10px; color:var(--muted); font-weight:600; }
+    .week-val { font-size:17px; font-weight:900; color:var(--gold); font-family: 'Londrina Solid', cursive; }
+
+    /* ── HORARIO BAR ── */
+    .hora-row { display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); }
+    .hora-row:last-child { border-bottom:none; }
+    .hora-lbl { font-size:11px; font-weight:700; width:90px; flex-shrink:0; color:var(--muted); }
+    .hora-bar-track { flex:1; background:rgba(0,0,0,0.3); border-radius:100px; height:8px; }
+    .hora-bar-fill  { height:8px; border-radius:100px; background:var(--gold); transition:width 0.6s ease; }
+    .hora-val { font-size:11px; font-weight:800; width:30px; text-align:right; flex-shrink:0; font-family: 'Londrina Solid', cursive; }
+
+    /* ── ITEM RANKING ── */
+    .item-rank { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); transition:background .15s; }
+    .item-rank:last-child { border-bottom:none; }
+    .item-rank:hover { background:var(--s3); }
+    .item-pos { width:24px; font-family: 'Londrina Solid', cursive; font-size:20px; font-weight:900; color:var(--muted); text-align:center; flex-shrink:0; }
+    .item-pos.gold { color:var(--gold); font-size: 24px; text-shadow: 0 0 10px rgba(218,170,60,0.5); }
+    .item-pos.silver { color:#C0C0C0; text-shadow: 0 0 8px rgba(192,192,192,0.5); }
+    .item-pos.bronze { color:#CD7F32; text-shadow: 0 0 8px rgba(205,127,50,0.5); }
+    .item-info { flex:1; min-width:0; }
+    .item-nm { font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-cat { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+    .item-stats { text-align:right; flex-shrink:0; }
+    .item-val { font-family: 'Londrina Solid', cursive; font-size:20px; font-weight:900; letter-spacing:0.5px; }
+    .item-ped { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+
+    /* ── FUNIL VISUAL ── */
+    .funil-step { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border); }
+    .funil-step:last-child { border-bottom:none; }
+    .funil-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+    .funil-nm { font-size:13px; font-weight:700; }
+    .funil-sub { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+    .funil-val { margin-left:auto; font-size:18px; font-weight:900; font-family: 'Londrina Solid', cursive; }
+
+    /* ── LOGISTICA STAT ── */
+    .log-card { background:var(--s2); border:1px solid var(--border); border-radius:12px; padding:14px 16px; text-align:center; }
+    .log-lbl { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:4px; }
+    .log-val { font-size:22px; font-weight:900; color:var(--gold); font-family: 'Londrina Solid', cursive; }
+    .log-sub { font-size:10px; font-weight:600; color:var(--muted); margin-top:2px; }
+
+    /* ── FONTE BADGE ── */
+    .fonte-pill { display:inline-flex; align-items:center; gap:5px; background:rgba(218,170,60,0.08); border:1px solid rgba(218,170,60,0.2); border-radius:8px; padding:4px 10px; font-size:10px; font-weight:700; color:var(--gold); }
+    .fonte-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); }
+
+    /* ── RESPONSIVE ── */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 98; }
+    
+    @media (max-width: 900px) {
+      #topbar { display: none; }
+      #sidebar { transform: translateX(-100%); z-index: 100; padding-bottom: 80px; box-shadow: 10px 0 30px rgba(0,0,0,0.8); }
+      #sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show { display: block; }
+      .filter-bar { display: flex; padding: 12px 16px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; -ms-overflow-style: none; }
+      .filter-bar::-webkit-scrollbar { display: none; }
+      #mobile-header { display: block; }
+      #bottom-nav { display: flex; }
+      #content { margin-left: 0; padding-bottom: 70px; }
+      .page { padding: 16px; }
+      .cols-3, .cols-4, .cols-5 { grid-template-columns: 1fr 1fr; }
+      .col-span-2, .col-span-3 { grid-column: span 1; }
+      .cols-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .cols-3, .cols-4, .cols-5, .cols-2 { grid-template-columns: 1fr; }
+      .col-span-2, .col-span-3 { grid-column: span 1; }
+      .stat-val { font-size: 38px; }
+      .hero-val { font-size: 48px; }
+      .form-row-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 380px) {
+      .form-row-2 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
-<body class="text-brand-beige min-h-screen pb-10">
+<body>
 
-<div class="max-w-[480px] mx-auto bg-brand-dark min-h-screen shadow-2xl relative border-x border-brand-surface border-opacity-50">
-
-  <!-- Header -->
-  <div class="bg-gradient-to-br from-brand-red to-[#5c2118] text-white px-5 py-5 pb-4 relative overflow-hidden">
-    <!-- Efeito visual no header -->
-    <div class="absolute -right-6 -top-6 w-32 h-32 bg-brand-gold opacity-10 rounded-full blur-2xl"></div>
-    <div class="absolute right-5 top-5 w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center cursor-pointer text-xl hover:bg-white/20 transition">
-      ☰
+<!-- MOBILE HEADER -->
+<div id="mobile-header">
+  <div class="mh-row">
+    <button id="mh-menu-btn" style="background:none;border:none;color:var(--gold);padding:0;margin-right:2px;cursor:pointer;" onclick="toggleSidebar()">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <img src="assets/logo-oficial.png" class="mh-icon-img" alt="Logo">
+    <div>
+      <div class="mh-title">Caminho do Dendê</div>
+      <div class="mh-sub" id="mh-date">Painel Gerencial</div>
     </div>
-    <div class="flex items-center gap-3 mb-1 relative z-10">
-      <img src="assets/logo.svg" alt="Logo Caminho do Dendê" class="h-12 w-auto drop-shadow-md rounded-full shadow-lg border-2 border-[#5c2118]">
-      <h1 class="text-xl font-black tracking-tight leading-tight text-brand-beige drop-shadow-sm">Caminho<br>do Dendê</h1>
-    </div>
-    <div id="dynamic-date" class="text-xs text-brand-beige/80 mt-1 font-medium tracking-wide relative z-10">PAINEL GERENCIAL</div>
   </div>
-
-  <!-- Tabs Navigation -->
-  <nav class="tabs-container flex overflow-x-auto bg-brand-dark border-b border-brand-border px-2 sticky top-0 z-50 shadow-md">
-    <button class="tab-btn active px-4 py-3.5 text-sm font-bold whitespace-nowrap border-b-[3px] border-brand-gold text-brand-gold transition" data-tab="home">Início</button>
-    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="financeiro">Financeiro</button>
-    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="vendas">Vendas</button>
-    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="marketing">Marketing</button>
-    <button class="tab-btn px-4 py-3.5 text-sm font-medium whitespace-nowrap border-b-[3px] border-transparent text-brand-muted hover:text-brand-beige transition" data-tab="operacao">Operação</button>
-  </nav>
-
-  <!-- ============ PAGE: HOME ============ -->
-  <main class="page active p-5" id="page-home">
-    
-    <div class="mb-5 flex justify-between items-end">
-      <div>
-        <h2 class="text-2xl font-black text-brand-beige tracking-tight">Boa tarde! 🌞</h2>
-        <p class="text-sm text-brand-muted mt-1 font-medium">Veja como está rodando a casa hoje.</p>
-      </div>
-      <button class="bg-brand-surfaceAccent text-brand-beige border border-brand-border px-3 py-1.5 rounded-full text-xs font-bold hover:bg-brand-red transition">Atualizar</button>
-    </div>
-
-    <!-- Caixa Principal (Fechamento) -->
-    <div class="bg-gradient-to-br from-[#2E3C2B] to-[#1E281C] border border-[#3A4D36] text-white rounded-2xl p-6 mb-4 shadow-xl shadow-black/50">
-      <div class="flex justify-between items-center mb-2">
-        <div class="text-[11px] uppercase tracking-widest text-[#B4D0AD] font-bold">Caixa de Ontem (Consolidado)</div>
-        <div class="bg-green-800 text-white text-[10px] px-2 py-0.5 rounded flex items-center font-bold">Válido</div>
-      </div>
-      <div class="text-4xl font-black tracking-tighter text-[#EBF4E9]">R$ 1.847,30</div>
-      <div class="text-xs text-[#B4D0AD] opacity-95 mt-2 flex items-center gap-1.5 font-medium">
-        <span class="bg-green-500/20 px-1.5 py-0.5 rounded text-[10px] text-green-300">▲ 12%</span> vs. sexta passada
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 mb-5">
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/30 shadow-md">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Pedidos em Andamento</div>
-        <div class="flex items-baseline gap-2 mt-1">
-          <div class="text-2xl font-bold text-brand-beige">47</div>
-          <div class="text-[11px] text-brand-gold font-bold">● 6 na cozinha</div>
-        </div>
-      </div>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/30 shadow-md">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Receita Estimada Hoje</div>
-        <div class="text-2xl font-bold text-brand-beige mt-1">R$ 2.110</div>
-        <div class="text-[10px] text-brand-gold/70 mt-0.5 font-bold">Até o momento</div>
-      </div>
-    </div>
-
-    <!-- Alertas de Inteligência -->
-    <div class="mb-6">
-      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">👀 Fique de Olho</h3>
-      
-      <!-- Alerta Padrão Negativo -->
-      <div class="bg-[#3D1E1B] border border-[#5E2B25] rounded-xl p-3.5 mb-2 flex gap-3 shadow-md shadow-black/40">
-        <div class="text-red-400 text-lg">⚠️</div>
-        <div>
-          <strong class="block text-red-200 text-sm font-bold">Pico de Gasto com Embalagens</strong>
-          <span class="text-xs text-red-100/70 mt-0.5 block">Sua média mensal é R$ 800, e já estamos em R$ 750 no dia 18. Avaliar fornecedor!</span>
-        </div>
-      </div>
-      
-      <!-- Alerta Operacional -->
-      <div class="bg-[#212738] border border-[#303952] rounded-xl p-3.5 flex gap-3 shadow-md shadow-black/40">
-        <div class="text-blue-400 text-lg">💡</div>
-        <div>
-          <strong class="block text-blue-200 text-sm font-bold">Notas de compras travadas no Whats</strong>
-          <span class="text-xs text-blue-100/70 mt-0.5 block flex justify-between items-center">
-            3 notas paradas na IA.
-            <button class="bg-blue-600/50 hover:bg-blue-600 border border-blue-500 text-white rounded text-[10px] px-2 font-bold py-0.5 ml-2 transition">Aprovar agora</button>
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Gráfico Diário Evolução -->
-    <div class="mb-6">
-      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Ritmo dos 7 Dias</h3>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 pt-4 shadow-black/40 shadow-md">
-        <div id="homeChart" class="w-full h-[180px]"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ============ PAGE: FINANCEIRO ============ -->
-  <main class="page p-5" id="page-financeiro">
-    <div class="mb-5">
-      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Financeiro do Mês</h2>
-      <p class="text-sm text-brand-muted mt-1 font-medium">Fluxo de caixa limpo nos tons de dendê.</p>
-    </div>
-
-    <!-- Cartão Dourado Terroso -->
-    <div class="bg-gradient-to-br from-[#775A22] to-[#403010] border border-[#8C6B26] text-white rounded-2xl p-6 mb-5 shadow-xl shadow-black/50">
-      <div class="flex justify-between items-center mb-2">
-        <div class="text-[11px] uppercase tracking-widest text-brand-beige/80 font-bold">Saldo Livre em Caixa (Lucro)</div>
-        <div class="bg-black/30 border border-white/10 text-white text-[10px] px-2 py-0.5 rounded font-bold">Meta: R$ 12k</div>
-      </div>
-      <div class="text-4xl font-black tracking-tighter text-brand-beige">R$ 10.110</div>
-      <div class="mt-4 w-full bg-black/40 rounded-full h-1.5 border border-black/20">
-        <div class="bg-brand-gold h-1.5 rounded-full" style="width: 84%"></div>
-      </div>
-      <div class="text-[10px] text-brand-beige/70 mt-1.5 text-right font-bold">84% da meta mensal</div>
-    </div>
-
-    <!-- Divisão Analítica de Caixa -->
-    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Onde está o dinheiro?</h3>
-    <div class="grid grid-cols-2 gap-3 mb-6">
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Dinheiro / PIX</div>
-        <div class="text-lg font-black text-[#8BB97B] mt-0.5">R$ 8.420</div>
-      </div>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">A Receber (APPs)</div>
-        <div class="text-lg font-black text-[#8BA4B9] mt-0.5">R$ 12.310</div>
-      </div>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md shadow-black/30">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Despesas Pagas</div>
-        <div class="text-lg font-black text-[#D47C70] mt-0.5">R$ 10.620</div>
-      </div>
-      <div class="bg-[#3D1E1B] border border-[#5E2B25] rounded-xl p-3.5 shadow-md shadow-black/30">
-        <div class="text-[10px] text-[#F3A59A] uppercase tracking-widest font-bold">Contas a Vencer</div>
-        <div class="text-lg font-black text-[#F3A59A] mt-0.5 mb-1">- R$ 1.830</div>
-        <div class="text-[9px] text-[#D47C70] font-bold">Luz e Equipe (Dia 20)</div>
-      </div>
-    </div>
-
-    <div class="flex justify-between items-end mb-3">
-      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold">Extrato Recente</h3>
-      <button class="text-xs font-bold text-brand-gold hover:underline">Baixar PDF</button>
-    </div>
-    
-    <div class="bg-brand-surface rounded-xl shadow-black/40 shadow-md border border-brand-border overflow-hidden divide-y divide-brand-border">
-      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-[#1e2a1b] text-[#8BB97B] flex justify-center items-center font-black border border-[#2d4029]">↓</div>
-          <div>
-            <div class="font-bold text-sm text-brand-beige">Venda Diária - iFood</div>
-            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Hoje · 14h22</div>
-          </div>
-        </div>
-        <div class="font-black text-sm text-[#8BB97B]">+ R$ 684,00</div>
-      </div>
-      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-[#3d1e1b] text-[#D47C70] flex justify-center items-center font-black border border-[#5e2b25]">↑</div>
-          <div>
-            <div class="font-bold text-sm text-brand-beige">Atacadão - Carnes</div>
-            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Ontem · Via IA</div>
-          </div>
-        </div>
-        <div class="font-black text-sm text-[#D47C70]">− R$ 487,30</div>
-      </div>
-      <div class="p-3.5 flex justify-between items-center hover:bg-brand-surfaceAccent transition">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-[#3d1e1b] text-[#D47C70] flex justify-center items-center font-black border border-[#5e2b25]">↑</div>
-          <div>
-            <div class="font-bold text-sm text-brand-beige">Neoenergia</div>
-            <div class="text-[10px] font-bold text-brand-muted uppercase tracking-wider mt-0.5">Segunda</div>
-          </div>
-        </div>
-        <div class="font-black text-sm text-[#D47C70]">− R$ 1.830,00</div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============ PAGE: VENDAS ============ -->
-  <main class="page p-5" id="page-vendas">
-    <div class="mb-5">
-      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Comercial & Vendas</h2>
-      <p class="text-sm text-brand-muted mt-1 font-medium">Cardápio e Canais na palma da mão.</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 mb-6">
-      <div class="bg-black/40 border border-brand-border rounded-xl p-4 shadow-black/50 shadow-lg">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Tickets do Mês</div>
-        <div class="text-3xl font-black text-brand-gold mt-1">1.284</div>
-        <div class="text-[11px] text-brand-muted mt-1 font-bold">Ticket Médio: <span class="text-[#8BB97B]">R$ 54,00</span></div>
-      </div>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-black/40 shadow-sm flex flex-col justify-center">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold mb-2">Picos de Atividade</div>
-        <div class="w-full h-11 flex items-end gap-1">
-          <div class="w-1/4 bg-brand-border h-1/4 rounded-t-sm"></div>
-          <div class="w-1/4 bg-[#D47C70] h-full rounded-t-sm" title="Meio-dia"></div>
-          <div class="w-1/4 bg-brand-red h-5/6 rounded-t-sm" title="Noite"></div>
-          <div class="w-1/4 bg-brand-border h-2/6 rounded-t-sm"></div>
-        </div>
-        <div class="flex justify-between mt-1 text-[9px] text-brand-muted font-bold">
-          <span>Manhã</span><span>Noite</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Canais -->
-    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Ranking de Canais</h3>
-    <div class="space-y-2 mb-6">
-      <!-- iFood -->
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-[#c51c1c] text-white flex justify-center items-center font-black">IF</div>
-          <div>
-            <div class="font-bold text-sm text-brand-beige">Aplicativo iFood</div>
-            <div class="text-[10px] font-medium text-brand-muted uppercase tracking-wider mt-0.5">340 pedidos</div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="font-black text-sm text-brand-beige">R$ 18.520</div>
-          <div class="text-[10px] font-bold text-[#8BB97B] bg-[#1e2a1b] border border-[#2d4029] px-1.5 rounded mt-0.5">45% do total</div>
-        </div>
-      </div>
-      <!-- Site -->
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-gold text-brand-dark flex justify-center items-center text-lg font-black shadow-inner">🌐</div>
-          <div>
-            <div class="font-bold text-sm text-brand-beige">Site Próprio (Caminho)</div>
-            <div class="text-[10px] font-medium text-brand-muted uppercase tracking-wider mt-0.5">125 pedidos</div>
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="font-black text-sm text-brand-beige">R$ 8.110</div>
-          <div class="text-[10px] font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/30 px-1.5 rounded mt-0.5">Alta margem</div>
-        </div>
-      </div>
-      <!-- Balcão/Zap -->
-      <div class="grid grid-cols-2 gap-2 mt-2">
-        <div class="bg-brand-surface border border-brand-border rounded-xl p-2 px-3 shadow-md flex justify-between items-center">
-          <span class="text-[11px] font-bold text-brand-muted">🏠 Salão</span>
-          <span class="text-xs font-black text-brand-beige">R$ 9.1k</span>
-        </div>
-        <div class="bg-brand-surface border border-brand-border rounded-xl p-2 px-3 shadow-md flex justify-between items-center">
-          <span class="text-[11px] font-bold text-[#8BB97B]">💬 Zap</span>
-          <span class="text-xs font-black text-brand-beige">R$ 4.2k</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Engenharia -->
-    <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3">Engenharia de Cardápio</h3>
-    <div class="space-y-3">
-      <div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-sm">🌟</span><span class="text-xs font-bold text-brand-gold">Pratos Estrela (Alto Lucro)</span>
-        </div>
-        <div class="bg-[#3D331A] border border-[#5E4D21] rounded-xl p-3 flex justify-between items-center shadow-md shadow-black/40">
-          <div><div class="font-bold text-sm text-brand-beige">#1 Moqueca Especial</div><div class="text-[10px] text-brand-muted mt-0.5">Custo R$ 18 · Revenda R$ 62</div></div>
-          <div class="text-xs font-black text-[#5E4D21] bg-brand-gold px-2.5 rounded-full py-0.5 shadow-sm">70% Margem</div>
-        </div>
-      </div>
-      <div>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-sm">⚠️</span><span class="text-xs font-bold text-[#D47C70]">Avaliar Retirada ou Precificação</span>
-        </div>
-        <div class="bg-[#2C1210] border border-[#5E2B25] rounded-xl p-3 flex justify-between items-center shadow-md shadow-black/40">
-          <div><div class="font-bold text-sm text-brand-beige">Camarão ao Alho</div><div class="text-[10px] text-[#D47C70]/80 mt-0.5">Baixo giro · Custa freezer</div></div>
-          <button class="text-[10px] font-bold text-brand-beige border border-[#D47C70] bg-[#5E2B25] hover:bg-brand-red px-2.5 rounded-lg py-1.5 shadow-sm transition">Pausar Prato</button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============ PAGE: MARKETING ============ -->
-  <main class="page p-5" id="page-marketing">
-    <div class="mb-5">
-      <h2 class="text-2xl font-black text-brand-beige tracking-tight">Investimento Meta</h2>
-      <p class="text-sm text-brand-muted mt-1 font-medium">Os anúncios virando vendas.</p>
-    </div>
-
-    <!-- Bloco ROI Gigante Escuro -->
-    <div class="bg-black border border-brand-surface rounded-2xl p-1 shadow-2xl mb-6 relative overflow-hidden">
-      <!-- Glow effect -->
-      <div class="absolute -right-10 -top-20 w-52 h-52 bg-brand-red opacity-30 blur-[60px] rounded-full pointer-events-none"></div>
-      <div class="absolute -left-10 -bottom-20 w-52 h-52 bg-brand-gold opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
-      
-      <div class="relative bg-gradient-to-tr from-[#1B0707] to-[#2C1210] p-5 rounded-[12px] border border-brand-surfaceAccent">
-        <div class="flex justify-between items-start mb-2">
-          <div class="text-[11px] uppercase tracking-widest text-brand-gold font-bold">Retorno do Dinheiro (ROI)</div>
-          <div class="bg-green-900/40 border border-green-500/30 text-green-400 text-[10px] px-2 py-0.5 rounded font-black tracking-wide">BATENDO META</div>
-        </div>
-        <div class="text-5xl font-black text-brand-beige tracking-tighter mt-1 mb-2">3,2×</div>
-        <div class="text-[11px] text-brand-muted font-bold leading-relaxed">Cada <span class="text-brand-gold">R$ 1,00</span> colocado no Instagram voltou <span class="text-brand-gold">R$ 3,20</span> reais para o restaurante.</div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 mb-6">
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md text-center">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Meta Ads (PAGO)</div>
-        <div class="text-xl font-black text-brand-beige mt-1">42%</div>
-        <div class="text-[10px] text-brand-muted mt-0.5 font-bold border-t border-dashed mt-2 pt-1 border-brand-border">Gasto Atual: <strong class="text-[#D47C70]">R$ 680</strong></div>
-      </div>
-      <div class="bg-brand-surface border border-brand-border rounded-xl p-3.5 shadow-md text-center">
-        <div class="text-[10px] text-brand-muted uppercase tracking-widest font-bold">Google (ORGÂNICO)</div>
-        <div class="text-xl font-black text-brand-beige mt-1">58%</div>
-        <div class="text-[10px] text-brand-muted mt-0.5 font-bold border-t border-dashed mt-2 pt-1 border-brand-border">E boca à boca</div>
-      </div>
-    </div>
-
-    <!-- Acionaveis Marketing -->
-    <div class="bg-brand-surface border border-brand-border rounded-xl p-4 shadow-md mb-6">
-      <h3 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-3 border-b border-brand-border pb-2">Central dos Criativos Ativos</h3>
-      <div class="space-y-4">
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-sm text-brand-beige">Vídeo da Moqueca (Reels)</span>
-            <span class="bg-[#3D1E1B] text-[#D47C70] border border-[#5E2B25] text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm">Fogo Alto🔥</span>
-          </div>
-          <div class="flex justify-between text-[11px] text-brand-muted border-l-2 border-brand-red pl-2 ml-1 font-medium">
-            <span>Custo da mensagem: R$ 1,50</span>
-            <span class="font-bold text-brand-gold">154 cliques</span>
-          </div>
-        </div>
-        <div>
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-sm text-brand-muted opacity-70">Foto da Fachada (Estático)</span>
-            <span class="bg-[#212121] text-gray-500 border border-gray-700 text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-sm">Pausado ⏸️</span>
-          </div>
-          <div class="flex justify-between text-[11px] text-brand-muted opacity-70 border-l-2 border-[#4D211C] pl-2 ml-1 font-medium">
-            <span>Custo muito alto: R$ 8,20</span>
-            <span class="font-bold text-[#D47C70]">Desativado</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ============ PAGE: OPERACAO ============ -->
-  <main class="page p-5" id="page-operacao">
-    <div class="mb-5 flex justify-between items-center">
-      <div>
-        <h2 class="text-2xl font-black text-brand-beige tracking-tight">Cozinha Viva</h2>
-        <p class="text-sm text-brand-muted mt-1 font-medium">Gestão da fila de preparo.</p>
-      </div>
-      <div class="flex items-center gap-2">
-         <span class="text-[10px] font-bold text-brand-gold uppercase">No ar</span>
-         <div class="w-2.5 h-2.5 bg-[#8BB97B] rounded-full animate-pulse shadow-[0_0_8px_#8BB97B]"></div>
-      </div>
-    </div>
-
-    <!-- Toggle Operacional Terroso -->
-    <div class="flex p-1 bg-black/30 rounded-lg mb-6 border border-brand-border">
-      <button class="flex-1 bg-brand-surface shadow-md rounded-md py-1.5 text-xs font-bold text-brand-beige border border-brand-surfaceAccent">Todos (8)</button>
-      <button class="flex-1 py-1.5 text-xs font-bold text-brand-muted hover:text-brand-beige transition">iFood (3)</button>
-      <button class="flex-1 py-1.5 text-xs font-bold text-brand-muted hover:text-brand-beige transition">Balcão/Site (5)</button>
-    </div>
-
-    <!-- Cozinha -->
-    <h3 class="text-xs uppercase tracking-widest text-[#D4AA3C] font-bold mb-3 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-[#D4AA3C]"></div> Queimando na Panela</h3>
-    <div class="space-y-3 mb-6">
-      <div class="bg-brand-surface border-l-4 border-[#D4AA3C] border-y border-r border-brand-border rounded-r-xl p-3 shadow-md relative overflow-hidden group">
-        <!-- Acão de Arrastar ficticia -->
-        <div class="absolute right-0 top-0 bottom-0 w-20 bg-[#6b8c5e] flex items-center justify-center translate-x-full group-hover:-translate-x-0 transition-transform cursor-pointer shadow-inner border-l border-[#536e49]">
-          <span class="text-white text-[10px] font-black uppercase text-center px-2">PRONTO ↓</span>
-        </div>
-        <div class="flex justify-between items-start mb-2">
-          <div class="font-black text-sm text-brand-beige">#2847 - Mariana Silva</div>
-          <div class="text-[10px] font-black text-[#D47C70] uppercase tracking-widest w-12 text-right">18 min</div>
-        </div>
-        <div class="text-xs text-brand-muted mb-2 font-medium">
-          1x Vatapá Especial G<br>
-          2x Refrigerante Guarana Lata
-        </div>
-        <div class="flex items-center justify-between mt-2 pt-2 border-t border-brand-surfaceAccent">
-          <span class="bg-[#c51c1c]/20 border border-[#c51c1c]/40 text-[#f58b8b] text-[9px] font-bold uppercase rounded px-2 py-0.5 tracking-wider">iFood · R$ 85,00</span>
-          <button class="text-[10px] font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/30 hover:bg-brand-gold hover:text-brand-dark px-3 py-1 rounded transition">Despachar Moto</button>
-        </div>
-      </div>
-
-      <div class="bg-brand-surface border-l-4 border-[#D4AA3C] border-y border-r border-brand-border rounded-r-xl p-3 shadow-md relative">
-        <div class="flex justify-between items-start mb-2">
-          <div class="font-black text-sm text-brand-beige">#2848 - Cliente Balcão</div>
-          <div class="text-[10px] font-black text-brand-gold uppercase tracking-widest w-12 text-right">06 min</div>
-        </div>
-        <div class="text-xs text-brand-muted mb-2 font-medium">
-          2x Acarajé no prato s/ pimenta
-        </div>
-        <div class="flex items-center justify-between mt-2 pt-2 border-t border-brand-surfaceAccent">
-          <span class="bg-[#E6C663]/20 border border-[#E6C663]/40 text-[#E6C663] text-[9px] font-bold uppercase rounded px-2 py-0.5 tracking-wider">Mesa 04 · R$ 36,00</span>
-          <button class="text-[10px] font-bold text-brand-beige bg-brand-surfaceAccent border border-brand-border hover:bg-brand-red px-3 py-1 rounded transition">Gritar Senha</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rota -->
-    <h3 class="text-xs uppercase tracking-widest text-[#8BA4B9] font-bold mb-3 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-[#8BA4B9]"></div> Motoboys Girando</h3>
-    <div class="space-y-3">
-      <div class="bg-[#1C202B] border-l-4 border-[#8BA4B9] border-y border-r border-[#2A3141] rounded-r-xl p-3 shadow-md opacity-70 hover:opacity-100 transition">
-        <div class="flex justify-between items-start mb-1">
-          <div class="font-bold text-sm text-brand-beige line-through decoration-brand-muted/50">#2842 - Lucas B.</div>
-          <div class="text-[9px] font-black text-[#5C7892] uppercase tracking-widest">Rotas: Zé</div>
-        </div>
-        <div class="flex items-center justify-between mt-2">
-          <span class="text-[10px] text-[#A6BCD1] font-medium">Bairro Boa Vista, R. João XVIII</span>
-          <button class="text-[10px] font-black text-[#1e2a1b] bg-[#8BB97B] hover:bg-green-400 px-3 py-1 rounded border border-[#6b8c5e] shadow-sm transition">✔ Resolvido</button>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <footer class="mt-8 text-center text-[10px] font-bold uppercase tracking-widest text-brand-muted/50 pb-10">
-    Caminho do Dendê - Gestão Premium
-  </footer>
 </div>
 
+<div id="shell">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <!-- ── SIDEBAR ── -->
+  <aside id="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/logo-oficial.png" class="brand-icon-img" alt="Logo">
+      <div>
+        <div class="brand-name">Caminho do Dendê</div>
+        <div class="brand-sub">Painel Gerencial</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Visão Geral</div>
+      <button class="nav-item active" data-page="inicio" id="nav-inicio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Início
+      </button>
+
+      <div class="sidebar-label">Controle na Mão</div>
+      <button class="nav-item" data-page="controle" id="nav-controle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Relatório Geral
+      </button>
+      <button class="nav-item" data-page="pagamentos" id="nav-pagamentos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Formas de Pagamento
+      </button>
+
+      <div class="sidebar-label">iFood</div>
+      <button class="nav-item" data-page="ifood-overview" id="nav-ifood-overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Visão iFood
+      </button>
+      <button class="nav-item" data-page="cardapio" id="nav-cardapio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 7H3l9-7z"/><path d="M3 9v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9"/></svg>
+        Cardápio & Funil
+      </button>
+      <button class="nav-item" data-page="logistica" id="nav-logistica">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Logística & Entregas
+      </button>
+      <button class="nav-item" data-page="ocorrencias" id="nav-ocorrencias">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Cancelamentos & Neg.
+      </button>
+
+      <div class="sidebar-label">Operação</div>
+      <button class="nav-item" data-page="lancar" id="nav-lancar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Lançar Movimento
+      </button>
+      <button class="nav-item" data-page="trafego" id="nav-trafego">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Tráfego Pago
+      </button>
+      <button class="nav-item" data-page="meta-ads" id="nav-meta-ads">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        Meta Ads
+      </button>
+      <button class="nav-item" data-page="caixa" id="nav-caixa">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Caixa & Metas
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="date-pill">
+        <strong id="sidebar-date-strong">Carregando...</strong>
+        <span id="sidebar-date-sub">Painel atualizado agora</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── CONTENT ── -->
+  <div id="content">
+    <!-- Topbar -->
+    <div id="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Início</div>
+        <div class="topbar-sub" id="topbar-sub">Resumo consolidado</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="fonte-pill"><div class="fonte-dot"></div> Dados dos relatórios</div>
+        <button class="btn-sm" onclick="abrirModalMetas()">🎯 Metas</button>
+        <button class="btn-sm gold" onclick="navTo('lancar')">+ Lançar</button>
+      </div>
+    </div>
+
+    <!-- Filtro de data global -->
+    <div class="filter-bar" id="filter-bar">
+      <label>Período:</label>
+      <div class="filter-pill-row" id="filter-pills">
+        <button class="f-pill sel" data-mes="todos">Todos</button>
+        <button class="f-pill" data-mes="1">Janeiro</button>
+        <button class="f-pill" data-mes="2">Fevereiro</button>
+        <button class="f-pill" data-mes="3">Março</button>
+        <button class="f-pill" data-mes="4">Abril</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ PÁGINA INÍCIO ═══════════ -->
+    <main class="page active" id="page-inicio">
+      <div class="page-title" id="home-greeting">Bom dia! ☀️</div>
+      <p class="page-sub">Visão consolidada — todos os canais combinados.</p>
+
+      <div class="cols-3">
+        <div class="stat-hero g-green col-span-2">
+          <div class="hero-lbl" style="color:#B4D0AD;">Receita Total (Controle na Mão)</div>
+          <div class="hero-val" id="home-receita" style="color:#EBF4E9;">R$ 0,00</div>
+          <div class="hero-sub" style="color:#B4D0AD;" id="home-receita-sub">Carregando...</div>
+          <div class="prog-track" style="background:rgba(0,0,0,.3);">
+            <div class="prog-fill" id="home-prog" style="width:0%;background:#8BB97B;"></div>
+          </div>
+          <div class="prog-text" id="home-prog-txt" style="color:#B4D0AD;">— da meta mensal</div>
+        </div>
+        <div class="stat-hero g-gold">
+          <div class="hero-lbl">Ticket Médio</div>
+          <div class="hero-val" id="home-ticket" style="color:var(--gold);">R$ 0,00</div>
+          <div class="hero-sub" id="home-ticket-sub">por venda</div>
+        </div>
+      </div>
+
+      <div class="cols-4">
+        <div class="stat-card">
+          <div class="stat-lbl">Vendas Totais</div>
+          <div class="stat-val" id="s-vendas" style="color:var(--gold);">0</div>
+          <div class="stat-sub" id="s-vendas-sub">pedidos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Pessoas Atendidas</div>
+          <div class="stat-val" id="s-pessoas" style="color:#8BA4B9;">0</div>
+          <div class="stat-sub">clientes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">iFood (plataforma)</div>
+          <div class="stat-val" id="s-ifood-plat" style="color:#f87171;">R$ 0</div>
+          <div class="stat-sub" id="s-ifood-plat-q">0 pedidos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">Delivery (app)</div>
+          <div class="stat-val" id="s-deliver" style="color:#a78bfa;">R$ 0</div>
+          <div class="stat-sub" id="s-deliver-q">0 entregas</div>
+        </div>
+      </div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box">
+          <div class="card-box-hdr">Evolução Mensal — Receita Total</div>
+          <div style="padding:12px 8px 8px;">
+            <div id="homeChart" style="height:220px;"></div>
+          </div>
+        </div>
+        <div class="card-box">
+          <div class="card-box-hdr">Formas de Pagamento</div>
+          <div id="home-pag-list"></div>
+        </div>
+      </div>
+
+      <div class="cols-3" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Desempenho iFood (portal)</div>
+          <div class="card-box" id="home-ifood-box"></div>
+        </div>
+        <div class="col-span-2">
+          <div class="section-lbl">Itens Mais Vendidos</div>
+          <div class="card-box" id="home-top-itens"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA CONTROLE ═══════════ -->
+    <main class="page" id="page-controle">
+      <div class="page-title">Controle na Mão</div>
+      <p class="page-sub">Dados do aplicativo de gestão — vendas, comandas e delivery.</p>
+
+      <div class="cols-5" id="controle-stats"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box">
+          <div class="card-box-hdr">Comparativo por Mês</div>
+          <div style="padding:12px 8px 8px;"><div id="controleChart" style="height:240px;"></div></div>
+        </div>
+        <div class="card-box">
+          <div class="card-box-hdr">Breakdown Financeiro</div>
+          <div id="controle-breakdown"></div>
+        </div>
+      </div>
+
+      <div class="section-lbl">Tabela Completa</div>
+      <div class="card-box">
+        <div style="overflow-x:auto;">
+          <table class="tbl" id="controle-table">
+            <thead><tr>
+              <th>Período</th><th>Vendas</th><th>Total</th><th>Ticket Médio</th>
+              <th>Commandas</th><th>Pessoas</th><th>Canceladas (R$)</th>
+              <th>Deliveries</th><th>Receita Delivery</th>
+            </tr></thead>
+            <tbody id="controle-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA PAGAMENTOS ═══════════ -->
+    <main class="page" id="page-pagamentos">
+      <div class="page-title">Formas de Pagamento</div>
+      <p class="page-sub">Distribuição dos pagamentos por modalidade — dados do Controle na Mão.</p>
+
+      <div class="cols-3" id="pag-hero-stats"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box">
+          <div class="card-box-hdr">Distribuição por Mês</div>
+          <div style="padding:12px 8px 8px;"><div id="pagChart" style="height:260px;"></div></div>
+        </div>
+        <div>
+          <div class="section-lbl">Por Canal de Pagamento</div>
+          <div class="card-box" id="pag-canal-list"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA IFOOD OVERVIEW ═══════════ -->
+    <main class="page" id="page-ifood-overview">
+      <div class="page-title">Visão iFood</div>
+      <p class="page-sub">Dados do Portal do Parceiro — período <span id="ifood-periodo-label">18/02 – 18/04/2026</span>.</p>
+
+      <div class="cols-4" id="ifood-overview-stats"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Pedidos por Dia da Semana</div>
+          <div class="card-box" id="ifood-dias-list"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Formas de Pagamento iFood</div>
+          <div class="card-box" id="ifood-pag-list"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-lbl">Horários com Mais Vendas</div>
+        <div class="cols-2" style="align-items:start;">
+          <div class="card-box card-box-pad" id="ifood-hora-fds">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;">Final de Semana</div>
+            <div id="ifood-hora-fds-bars"></div>
+          </div>
+          <div class="card-box card-box-pad" id="ifood-hora-sem">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;">Dia de Semana</div>
+            <div id="ifood-hora-sem-bars"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form manual do iFood (manter funcionalidade) -->
+      <div class="divider"></div>
+      <div class="section-lbl">Inserir/Atualizar Dados iFood (manual)</div>
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box card-box-pad">
+          <div class="form-group">
+            <div class="form-lbl">Período (Mês/Ano)</div>
+            <input type="month" class="form-input" id="ifood-periodo">
+          </div>
+          <div class="form-row-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Faturamento Bruto</div>
+              <div class="big-wrap" style="padding:10px 14px;">
+                <span class="big-prefix" style="font-size:14px;">R$</span>
+                <input type="number" class="big-input" style="font-size:18px;" id="ifood-bruto" placeholder="0" inputmode="decimal">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Comissão Paga</div>
+              <div class="big-wrap" style="padding:10px 14px;">
+                <span class="big-prefix" style="font-size:14px;color:var(--red-a);">R$</span>
+                <input type="number" class="big-input" style="font-size:18px;" id="ifood-comissao" placeholder="0" inputmode="decimal">
+              </div>
+            </div>
+          </div>
+          <div class="form-row-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Repasse Líquido</div>
+              <div class="big-wrap" style="padding:10px 14px;">
+                <span class="big-prefix" style="font-size:14px;color:var(--green-s);">R$</span>
+                <input type="number" class="big-input" style="font-size:18px;" id="ifood-liquido" placeholder="0" inputmode="decimal">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Qtd. Pedidos</div>
+              <input type="number" class="form-input" id="ifood-qtd" placeholder="0" inputmode="numeric" style="height:48px;">
+            </div>
+          </div>
+          <button class="btn-primary full" onclick="salvarIfood()">💾 Salvar Dados iFood</button>
+        </div>
+        <div>
+          <div class="section-lbl">Histórico Salvo</div>
+          <div class="card-box" id="ifood-hist-box">
+            <div class="empty"><div class="ico">📊</div><p>Nenhum registro salvo manualmente.</p></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA CARDÁPIO ═══════════ -->
+    <main class="page" id="page-cardapio">
+      <div class="page-title">Cardápio & Funil de Conversão</div>
+      <p class="page-sub">Desempenho dos itens e funil de pedidos no iFood.</p>
+
+      <div class="section-lbl">Funil de Conversão da Loja</div>
+      <div class="cols-4" id="funil-stats"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Funil Visual</div>
+          <div class="card-box" id="funil-visual"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Gráfico de Conversão</div>
+          <div class="card-box">
+            <div style="padding:12px 8px 8px;"><div id="funilChart" style="height:220px;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-lbl">Ranking de Itens</div>
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="card-box-hdr" style="background:var(--s2);border-radius:14px 14px 0 0;border:1px solid var(--border);">Por Receita</div>
+          <div class="card-box" style="border-radius:0 0 14px 14px;border-top:none;" id="itens-receita"></div>
+        </div>
+        <div>
+          <div class="card-box-hdr" style="background:var(--s2);border-radius:14px 14px 0 0;border:1px solid var(--border);">Por Pedidos</div>
+          <div class="card-box" style="border-radius:0 0 14px 14px;border-top:none;" id="itens-pedidos"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA LOGÍSTICA ═══════════ -->
+    <main class="page" id="page-logistica">
+      <div class="page-title">Logística & Entregas</div>
+      <p class="page-sub">Desempenho das entregas iFood — tempo de preparo, alocação e entrega.</p>
+
+      <div class="cols-4" id="log-stats"></div>
+
+      <div class="section-lbl">Entregas no Período (12/04 – 18/04)</div>
+      <div class="card-box">
+        <div style="overflow-x:auto;">
+          <table class="tbl" id="log-table">
+            <thead><tr>
+              <th>Pedido</th><th>Data</th><th>Turno</th><th>Status</th>
+              <th>Preparo (min)</th><th>Alocação (min)</th><th>Entrega Realizada (min)</th>
+              <th>Prometido (min)</th><th>Atraso (min)</th>
+            </tr></thead>
+            <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Distribuição por Turno</div>
+          <div class="card-box card-box-pad" id="log-turno"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Tempo Médio de Preparo vs Entrega</div>
+          <div class="card-box">
+            <div style="padding:12px 8px 8px;"><div id="logChart" style="height:200px;"></div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA OCORRÊNCIAS ═══════════ -->
+    <main class="page" id="page-ocorrencias">
+      <div class="page-title">Cancelamentos & Negociações</div>
+      <p class="page-sub">Registro de problemas, cancelamentos e tratativas com clientes.</p>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Cancelamentos</div>
+          <div class="card-box" id="cancel-list"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Negociações</div>
+          <div class="card-box" id="neg-list"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA LANÇAR ═══════════ -->
+    <main class="page" id="page-lancar">
+      <div class="page-title">Lançar Movimento</div>
+      <p class="page-sub">Registre vendas presenciais, WhatsApp, iFood e outros canais.</p>
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box card-box-pad">
+          <div class="form-group">
+            <div class="form-lbl">Canal de Venda</div>
+            <div class="pill-row" id="canal-pills">
+              <button class="pill sel" data-val="presencial">🏠 Presencial</button>
+              <button class="pill" data-val="whatsapp">💬 WhatsApp</button>
+              <button class="pill" data-val="ifood">🔴 iFood</button>
+              <button class="pill" data-val="instadelivery">📦 InstaDelivery</button>
+              <button class="pill" data-val="site">🌐 Site</button>
+            </div>
+            <input type="hidden" id="canal-input" value="presencial">
+          </div>
+          <div class="form-group">
+            <div class="form-lbl">Valor (R$)</div>
+            <div class="big-wrap">
+              <span class="big-prefix">R$</span>
+              <input type="number" id="val-input" class="big-input" placeholder="0,00" step="0.01" min="0" inputmode="decimal">
+            </div>
+          </div>
+          <div class="form-row-3" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Pagamento</div>
+              <select class="form-select" id="pagto-input">
+                <option value="dinheiro">💵 Dinheiro</option>
+                <option value="pix">🔵 PIX</option>
+                <option value="debito">💳 Débito</option>
+                <option value="credito">💳 Crédito</option>
+                <option value="app">📱 No App</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Data</div>
+              <input type="date" class="form-input" id="data-input">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Qtd. Pedidos</div>
+              <input type="number" id="qtd-input" class="form-input" placeholder="1" min="1" inputmode="numeric">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-lbl">Observação</div>
+            <input type="text" id="obs-input" class="form-input" placeholder="Ex: Sábado almoço especial">
+          </div>
+          <button class="btn-primary full" onclick="lancarVenda()">✅ Registrar Movimento</button>
+        </div>
+        <div>
+          <div class="section-lbl">Últimos Registros</div>
+          <div class="card-box" id="extrato-list">
+            <div class="empty"><div class="ico">📋</div><p>Nenhum lançamento ainda.</p></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA TRÁFEGO ═══════════ -->
+    <main class="page" id="page-trafego">
+      <div class="page-title font-brand">Tráfego Pago</div>
+      <p class="page-sub">Resumo consolidado dos investimentos em mídia paga. Dados do Meta Ads embutidos + lançamentos manuais.</p>
+
+      <!-- KPIs reais do Meta Ads -->
+      <div class="section-lbl">Meta Ads — Nov/2025 a Abr/2026</div>
+      <div class="cols-4" id="tf-meta-kpis"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box">
+          <div class="card-box-hdr">Gasto Mensal — Meta Ads</div>
+          <div style="padding:12px 8px 8px;"><div id="tfMetaChart" style="height:220px;"></div></div>
+        </div>
+        <div class="card-box">
+          <div class="card-box-hdr">Alcance & Impressões por Mês</div>
+          <div style="padding:12px 8px 8px;"><div id="tfAlcanceChart" style="height:220px;"></div></div>
+        </div>
+      </div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Top Anúncios por Gasto Total</div>
+          <div class="card-box" id="tf-top-ads"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Métricas por Mês</div>
+          <div class="card-box">
+            <div style="overflow-x:auto;">
+              <table class="tbl" id="tf-mes-table">
+                <thead><tr>
+                  <th>Mês</th><th>Gasto (R$)</th><th>Impressões</th><th>Cliques</th><th>Alcance</th><th>CPM</th>
+                </tr></thead>
+                <tbody id="tf-mes-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <!-- Lançamentos manuais -->
+      <div class="section-lbl">Lançamentos Manuais (complementar)</div>
+      <div class="cols-3" style="margin-bottom:14px;">
+        <div class="stat-hero g-blue">
+          <div class="hero-lbl" style="color:#8BA4B9;">Total Manual Registrado</div>
+          <div class="hero-val" id="tf-total" style="color:white;">R$ 0,00</div>
+          <div class="hero-sub" style="color:#8BA4B9;">Meta + Google (manual)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">CPV (Custo/Pedido)</div>
+          <div class="stat-val" id="tf-cpv" style="color:var(--gold);">—</div>
+          <div class="stat-sub">Por pedido estimado</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-lbl">ROI Estimado</div>
+          <div class="stat-val" id="tf-roi" style="color:var(--green-s);">—</div>
+          <div class="stat-sub">R$1 investido retorna</div>
+        </div>
+      </div>
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box card-box-pad">
+          <div class="form-group">
+            <div class="form-lbl">Semana de Referência</div>
+            <input type="week" class="form-input" id="tf-semana">
+          </div>
+          <div class="form-row-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Meta Ads (R$)</div>
+              <div class="big-wrap" style="padding:10px 14px;">
+                <span class="big-prefix" style="font-size:14px;">R$</span>
+                <input type="number" class="big-input" style="font-size:18px;" id="tf-meta" placeholder="0" inputmode="decimal">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="form-lbl">Google Ads (R$)</div>
+              <div class="big-wrap" style="padding:10px 14px;">
+                <span class="big-prefix" style="font-size:14px;">R$</span>
+                <input type="number" class="big-input" style="font-size:18px;" id="tf-google" placeholder="0" inputmode="decimal">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-lbl">Pedidos Originados (estimativa)</div>
+            <input type="number" class="form-input" id="tf-pedidos" placeholder="Ex: 35" inputmode="numeric">
+          </div>
+          <button class="btn-primary full" onclick="salvarTrafego()">💾 Salvar Semana</button>
+        </div>
+        <div>
+          <div class="section-lbl">Semanas Registradas</div>
+          <div id="tf-hist">
+            <div class="empty" style="background:var(--s2);border:1px solid var(--border);border-radius:14px;">
+              <div class="ico">📣</div><p>Nenhuma semana registrada.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══════════ PÁGINA META ADS ═══════════ -->
+    <main class="page" id="page-meta-ads">
+      <div class="page-title font-brand">Meta Ads</div>
+      <p class="page-sub">Análise detalhada das campanhas — <span style="color:var(--gold);">Nov/2025 a Abr/2026</span>. Total de 2.385 registros de anúncios.</p>
+
+      <div class="cols-5" id="meta-kpis-full"></div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div class="card-box">
+          <div class="card-box-hdr">Evolução do Gasto Mensal</div>
+          <div style="padding:12px 8px 8px;"><div id="metaGastoChart" style="height:230px;"></div></div>
+        </div>
+        <div class="card-box">
+          <div class="card-box-hdr">Cliques e Alcance por Mês</div>
+          <div style="padding:12px 8px 8px;"><div id="metaCliquesChart" style="height:230px;"></div></div>
+        </div>
+      </div>
+
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="section-lbl">Top Anúncios por Investimento</div>
+          <div class="card-box" id="meta-top-ads-full"></div>
+        </div>
+        <div>
+          <div class="section-lbl">Eficiência por Mês (CPM & CPC)</div>
+          <div class="card-box">
+            <div style="overflow-x:auto;">
+              <table class="tbl">
+                <thead><tr><th>Mês</th><th>Gasto (R$)</th><th>Impressões</th><th>Cliques</th><th>CPM (R$)</th><th>CPC estimado</th><th>Alcance</th></tr></thead>
+                <tbody id="meta-efic-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-lbl">Resultados por Tipo de Objetivo</div>
+      <div class="card-box" id="meta-objetivos"></div>
+    </main>
+
+    <!-- ═══════════ PÁGINA CAIXA & METAS ═══════════ -->
+    <main class="page" id="page-caixa">
+      <div class="page-title font-brand">Caixa & Metas</div>
+      <p class="page-sub">Saldo real e objetivos do mês.</p>
+      <div class="cols-2" style="align-items:start;">
+        <div>
+          <div class="stat-hero g-gold" style="margin-bottom:16px;">
+            <div class="hero-lbl" style="color:var(--beige);">Saldo Líquido Estimado</div>
+            <div class="hero-val font-brand" id="cx-saldo" style="color:var(--beige);">R$ 0,00</div>
+            <div class="hero-sub">Receita − Comissões − Tráfego</div>
+          </div>
+          <div class="card-box">
+            <div class="card-box-hdr">Composição do Caixa</div>
+            <div class="caixa-row"><span class="c-lbl">📈 Receita Bruta Total</span><span class="c-val" id="cx-bruta" style="color:var(--green-s);">R$ 0,00</span></div>
+            <div class="caixa-row"><span class="c-lbl">🔴 Comissão iFood</span><span class="c-val" id="cx-comis" style="color:var(--red-a);">- R$ 0,00</span></div>
+            <div class="caixa-row"><span class="c-lbl">📣 Investimento em Ads</span><span class="c-val" id="cx-ads" style="color:var(--red-a);">- R$ 0,00</span></div>
+            <div class="caixa-row" style="border-top:2px solid var(--border);"><span class="c-lbl" style="font-weight:800;color:var(--beige);">💰 Líquido Estimado</span><span class="c-val" id="cx-liq2" style="color:var(--gold);font-size:17px;">R$ 0,00</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-lbl">
+            Metas do Mês
+            <button class="btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="abrirModalMetas()">✏️ Configurar</button>
+          </div>
+          <div id="metas-container">
+            <div class="empty" style="background:var(--s2);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;">
+              <div class="ico">🎯</div><p>Nenhuma meta configurada.<br>Clique em "Configurar" acima.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /content -->
+</div><!-- /shell -->
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <button class="bnav-btn active" data-page="inicio" onclick="navTo('inicio',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    <span>Início</span>
+  </button>
+  <button class="bnav-btn" data-page="controle" onclick="navTo('controle',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    <span>Controle</span>
+  </button>
+  <button class="bnav-btn" data-page="ifood-overview" onclick="navTo('ifood-overview',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <span>iFood</span>
+  </button>
+  <button class="bnav-btn" data-page="lancar" onclick="navTo('lancar',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span>Lançar</span>
+  </button>
+  <button class="bnav-btn" data-page="caixa" onclick="navTo('caixa',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span>Caixa</span>
+  </button>
+</nav>
+
+<!-- MODAL METAS -->
+<div class="modal-ov" id="modal-metas">
+  <div class="modal-box">
+    <div class="modal-title">Configurar Metas do Mês</div>
+    <div class="modal-sub">Defina objetivos mensais de faturamento e limites de gastos.</div>
+    <div class="form-row-2">
+      <div class="form-group"><div class="form-lbl">Meta Total (R$)</div><input type="number" class="form-input" id="m-total" placeholder="Ex: 25000" inputmode="decimal"></div>
+      <div class="form-group"><div class="form-lbl">Meta iFood (R$)</div><input type="number" class="form-input" id="m-ifood" placeholder="Ex: 5000" inputmode="decimal"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group"><div class="form-lbl">Meta Presencial (R$)</div><input type="number" class="form-input" id="m-pres" placeholder="Ex: 15000" inputmode="decimal"></div>
+      <div class="form-group"><div class="form-lbl">Limite de Ads (R$)</div><input type="number" class="form-input" id="m-ads" placeholder="Ex: 2000" inputmode="decimal"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn-primary" style="flex:1;justify-content:center;" onclick="salvarMetas()">💾 Salvar Metas</button>
+      <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">✅ Salvo!</div>
+
 <script>
-  // Navegação Tabs
-  const tabs = document.querySelectorAll('.tab-btn');
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabs.forEach(t => {
-        t.classList.remove('active', 'border-brand-gold', 'text-brand-gold');
-        t.classList.add('border-transparent', 'text-brand-muted');
-      });
-      btn.classList.add('active', 'border-brand-gold', 'text-brand-gold');
-      btn.classList.remove('border-transparent', 'text-brand-muted');
-      
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + btn.dataset.tab).classList.add('active');
-    });
+/* ══════════════════════════════════════════
+   DADOS DOS RELATÓRIOS (embutidos)
+══════════════════════════════════════════ */
+const RELATORIOS = {
+  controle: [
+    { mes: 1, periodo: "Janeiro (01/01 a 31/01)", num_vendas: 130, valor_produtos: 10936.10, taxa_entrega: 386.90, taxa_garcom: 814.72, total: 12181.72, ticket_medio: 93.71, pag_credito: 6079.91, pag_debito: 3282.91, pag_pix: 2298.52, comandas_usadas: 86, pessoas_atendidas: 130, valor_pago: 8390.80, valor_aberto: 12, canceladas: 733.50, num_deliveries: 47, taxa_delivery: 501.93, vendas_delivery: 3024.22 },
+    { mes: 2, periodo: "Fevereiro (01/02 a 28/02)", num_vendas: 72, valor_produtos: 6878.06, taxa_entrega: 233.13, taxa_garcom: 395.19, total: 7547.63, ticket_medio: 104.83, pag_credito: 4289.77, pag_debito: 1145.94, pag_pix: 1910.62, comandas_usadas: 42, pessoas_atendidas: 73, valor_pago: 5172.60, valor_aberto: 12, canceladas: 357.60, num_deliveries: 31, taxa_delivery: 370.14, vendas_delivery: 2323.44 },
+    { mes: 3, periodo: "Março (01/03 a 31/03)", num_vendas: 72, valor_produtos: 6878.06, taxa_entrega: 233.13, taxa_garcom: 395.19, total: 7547.63, ticket_medio: 104.83, pag_credito: 4289.77, pag_debito: 1145.94, pag_pix: 1910.62, comandas_usadas: 42, pessoas_atendidas: 73, valor_pago: 5172.60, valor_aberto: 12, canceladas: 357.60, num_deliveries: 31, taxa_delivery: 370.14, vendas_delivery: 2323.44 },
+    { mes: 4, periodo: "Abril (01/04 a 19/04)", num_vendas: 76, valor_produtos: 7417.23, taxa_entrega: 210.87, taxa_garcom: 450.41, total: 8091.19, ticket_medio: 106.46, pag_credito: 4050.08, pag_debito: 1982.69, pag_pix: 1475.34, comandas_usadas: 57, pessoas_atendidas: 77, valor_pago: 5537.00, valor_aberto: 12, canceladas: 500.80, num_deliveries: 26, taxa_delivery: 274.84, vendas_delivery: 2260.15 },
+  ],
+  ifood_vendas: {
+    geral: [{ periodo: "18/02/2026 - 18/04/2026", servico: "App iFood", logistica: "Entrega parceira", total_vendas: 38, valor_total: 2777.64, taxa_entrega: 430.68, ticket_medio: 73.10, novos_clientes: 27 }],
+    horarios: [
+      { periodo_tipo: "Final de semana", horario: "10h - 12h", total_vendas: 2 }, { periodo_tipo: "Final de semana", horario: "12h - 14h", total_vendas: 8 }, { periodo_tipo: "Final de semana", horario: "14h - 16h", total_vendas: 3 }, { periodo_tipo: "Final de semana", horario: "16h - 18h", total_vendas: 1 }, { periodo_tipo: "Final de semana", horario: "18h - 20h", total_vendas: 4 }, { periodo_tipo: "Final de semana", horario: "20h - 22h", total_vendas: 2 },
+      { periodo_tipo: "Dia de semana", horario: "10h - 12h", total_vendas: 1 }, { periodo_tipo: "Dia de semana", horario: "12h - 14h", total_vendas: 5 }, { periodo_tipo: "Dia de semana", horario: "14h - 16h", total_vendas: 1 }, { periodo_tipo: "Dia de semana", horario: "18h - 20h", total_vendas: 2 }, { periodo_tipo: "Dia de semana", horario: "20h - 22h", total_vendas: 3 },
+    ],
+    pagamentos: [
+      { forma: "Crédito", total: 18 }, { forma: "PIX", total: 14 }, { forma: "NuPay", total: 2 }, { forma: "Débito", total: 2 }, { forma: "Dinheiro", total: 1 }, { forma: "Vale Refeição", total: 1 },
+    ],
+    dias: [
+      { dia: "Sábado", total: 20 }, { dia: "Sexta", total: 11 }, { dia: "Quinta", total: 4 }, { dia: "Domingo", total: 3 },
+    ]
+  },
+  ifood_cardapio: {
+    funil: [{ periodo: "18/02/2026 - 18/04/2026", visitas: 898, visualizacoes: 293, sacola: 86, revisao: 83, concluidos: 38, conversao: 4.23 }],
+    itens: [
+      { nome: "Porção de acarajé.", categoria: "Em 1 categorias", visitas: 48, pedidos: 21, conversao: 43.75, qtd_vendida: 23, valor_total: 1265.00 },
+      { nome: "Acarajé completo.", categoria: "Em 1 categorias", visitas: 59, pedidos: 10, conversao: 16.95, qtd_vendida: 13, valor_total: 494.00 },
+      { nome: "Tapioca de frango cremoso.", categoria: "Em 1 categorias", visitas: 5, pedidos: 4, conversao: 80.00, qtd_vendida: 5, valor_total: 125.00 },
+      { nome: "Bobó de camarão.", categoria: "Em 1 categorias", visitas: 28, pedidos: 3, conversao: 10.71, qtd_vendida: 4, valor_total: 244.00 },
+      { nome: "Acarajé simples.", categoria: "Em 1 categorias", visitas: 28, pedidos: 3, conversao: 10.71, qtd_vendida: 3, valor_total: 105.00 },
+      { nome: "Caldo de mocotó.", categoria: "Em 1 categorias", visitas: 10, pedidos: 3, conversao: 30.00, qtd_vendida: 3, valor_total: 120.00 },
+      { nome: "Caldo de feijão.", categoria: "Em 1 categorias", visitas: 7, pedidos: 3, conversao: 42.86, qtd_vendida: 3, valor_total: 120.00 },
+      { nome: "Porção de coxinha de dendê.", categoria: "Em 1 categorias", visitas: 27, pedidos: 2, conversao: 7.41, qtd_vendida: 2, valor_total: 70.00 },
+      { nome: "Vatapá.", categoria: "Em 1 categorias", visitas: 22, pedidos: 2, conversao: 9.09, qtd_vendida: 2, valor_total: 110.00 },
+      { nome: "Efó.", categoria: "Em 1 categorias", visitas: 7, pedidos: 1, conversao: 14.29, qtd_vendida: 1, valor_total: 55.00 },
+    ]
+  },
+  ifood_logistica: [
+    { id_curto: "6122", data: "2026-04-12 12:26:50", turno: "ALMOCO", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 6.83, tempo_alocacao: 7.28, tempo_entrega_km: 0.05, tempo_prometido: 42.0, tempo_realizado: 19.58, tempo_atraso: 0.0 },
+    { id_curto: "0548", data: "2026-04-16 19:13:29", turno: "JANTAR", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 20.47, tempo_alocacao: 5.35, tempo_entrega_km: 11.88, tempo_prometido: 39.0, tempo_realizado: 30.08, tempo_atraso: 0.0 },
+    { id_curto: "1649", data: "2026-04-17 20:06:08", turno: "JANTAR", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 14.62, tempo_alocacao: 0.77, tempo_entrega_km: 12.67, tempo_prometido: 30.0, tempo_realizado: 21.33, tempo_atraso: 0.0 },
+    { id_curto: "3914", data: "2026-04-13 13:01:00", turno: "ALMOCO", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 18.20, tempo_alocacao: 4.10, tempo_entrega_km: 8.30, tempo_prometido: 40.0, tempo_realizado: 25.10, tempo_atraso: 0.0 },
+    { id_curto: "2271", data: "2026-04-14 20:45:00", turno: "JANTAR", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 12.50, tempo_alocacao: 3.20, tempo_entrega_km: 9.40, tempo_prometido: 35.0, tempo_realizado: 22.80, tempo_atraso: 0.0 },
+    { id_curto: "5501", data: "2026-04-15 12:35:00", turno: "ALMOCO", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 9.80, tempo_alocacao: 6.50, tempo_entrega_km: 7.20, tempo_prometido: 38.0, tempo_realizado: 18.90, tempo_atraso: 0.0 },
+    { id_curto: "7832", data: "2026-04-18 13:20:00", turno: "ALMOCO", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 15.30, tempo_alocacao: 5.80, tempo_entrega_km: 10.50, tempo_prometido: 42.0, tempo_realizado: 28.40, tempo_atraso: 0.0 },
+    { id_curto: "4409", data: "2026-04-18 21:00:00", turno: "JANTAR", servico: "FULL_SERVICE", status: "CONCLUÍDO", motivo_cancel: "", tempo_preparo: 11.00, tempo_alocacao: 2.50, tempo_entrega_km: 6.80, tempo_prometido: 32.0, tempo_realizado: 17.60, tempo_atraso: 0.0 },
+  ],
+  ifood_cancelamentos: [
+    { id_pedido: "6872", data: "2026-03-26 21:29:53", turno: "JANTAR", status: "CANCELADO", motivo: "PROBLEMAS DE SISTEMA NA LOJA", valor_pedido: 96.00, origem: "LOJA" },
+  ],
+  ifood_negociacoes: [
+    { id_pedido: "6447", data: "04/04/2026 19:19", turno: "JANTAR", status: "CONCLUIDO", valor_pedido: 62.98, motivo: "FALTOU INSERIR INFORMAÇÕES NO PEDIDO", quem_iniciou: "CLIENTE", resposta_loja: "RECUSOU A SOLICITAÇÃO", valor_cupom: 0, valor_reembolso: 0 },
+  ],
+  meta_ads: {
+    por_mes: [
+      { key: '2025-11', label: 'Nov/25', mes: 11, ano: 2025, valor_total: 338.93, impressoes: 29149, cliques: 387, alcance: 26706, resultados: 6099, anuncios: 285 },
+      { key: '2025-12', label: 'Dez/25', mes: 12, ano: 2025, valor_total: 229.08, impressoes: 45114, cliques: 521, alcance: 42250, resultados: 11336, anuncios: 465 },
+      { key: '2026-01', label: 'Jan/26', mes:  1, ano: 2026, valor_total:  51.11, impressoes: 24302, cliques: 200, alcance: 23481, resultados:  7881, anuncios: 465 },
+      { key: '2026-02', label: 'Fev/26', mes:  2, ano: 2026, valor_total:  71.71, impressoes: 30904, cliques: 220, alcance: 30009, resultados: 26572, anuncios: 420 },
+      { key: '2026-03', label: 'Mar/26', mes:  3, ano: 2026, valor_total:  83.14, impressoes: 38021, cliques: 264, alcance: 37153, resultados: 31614, anuncios: 465 },
+      { key: '2026-04', label: 'Abr/26', mes:  4, ano: 2026, valor_total:  36.90, impressoes:  2819, cliques:  23, alcance:  2340, resultados:    17, anuncios: 285 },
+    ],
+    top_anuncios: [
+      { nome: '[AD02] Estático Foodporn — Feed/Story',         valor: 230.82, impressoes: 18200, cliques: 290 },
+      { nome: '[AD003] Você Já Provou — Feed',                 valor: 129.38, impressoes: 12800, cliques: 180 },
+      { nome: '[AD03] Estático 27/10 — Feed',                  valor: 102.01, impressoes:  9500, cliques: 130 },
+      { nome: '[AD001] Vídeo 09/10 Fachada — Stories',         valor: 101.60, impressoes: 11200, cliques: 155 },
+      { nome: 'Reconhecimento de Marca',                       valor:  80.29, impressoes: 14300, cliques:  98 },
+      { nome: 'Post Instagram: Domingo tem...',                valor:  44.59, impressoes:  4100, cliques:  62 },
+      { nome: '[AD01] Vídeo 09/10 — Stories',                  valor:  44.07, impressoes:  3900, cliques:  55 },
+      { nome: 'Post Instagram: Primeiro, o corte...',          valor:  29.97, impressoes:  2800, cliques:  38 },
+      { nome: '[AD04] Você Já Provou — Feed',                  valor:  26.83, impressoes:  2400, cliques:  32 },
+      { nome: '[AD004] Porção Acarajés — Feed',                valor:  12.29, impressoes:  1100, cliques:  15 },
+    ],
+    objetivos: [
+      { tipo: 'Mensagens (WhatsApp/DM)', indicador: 'messaging_conversation_started_7d', resultados: 523,  cor: '#8BB97B' },
+      { tipo: 'Engajamento no Post',     indicador: 'post_engagement',                  resultados: 71946, cor: '#a78bfa' },
+      { tipo: 'Visitas ao Perfil',       indicador: 'profile_visit_view',               resultados: 1450,  cor: '#8BA4B9' },
+      { tipo: 'Alcance',                 indicador: 'reach',                            resultados: 1058,  cor: '#DAAA3C' },
+    ]
+  }
+};
+
+/* ══════════════════════════════════════════
+   FILTRO GLOBAL
+══════════════════════════════════════════ */
+let filtroMes = 'todos';
+
+document.querySelectorAll('#filter-pills .f-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#filter-pills .f-pill').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    filtroMes = btn.dataset.mes;
+    renderAll();
+  });
+});
+
+function getControleData() {
+  if (filtroMes === 'todos') return RELATORIOS.controle;
+  const m = parseInt(filtroMes);
+  return RELATORIOS.controle.filter(r => r.mes === m);
+}
+
+function sumField(arr, field) {
+  return arr.reduce((s, r) => s + (r[field] || 0), 0);
+}
+
+function avgField(arr, field) {
+  if (!arr.length) return 0;
+  return sumField(arr, field) / arr.length;
+}
+
+/* ══════════════════════════════════════════
+   STORAGE & UTILS
+══════════════════════════════════════════ */
+const DB = {
+  get: (k, d=[]) => { try { return JSON.parse(localStorage.getItem('cdd_'+k)) ?? d; } catch { return d; } },
+  set: (k, v)    => localStorage.setItem('cdd_'+k, JSON.stringify(v)),
+};
+const fmt = v => 'R$ ' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtN = v => Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const oggi = () => new Date().toISOString().split('T')[0];
+const mesAtual = () => new Date().toISOString().slice(0,7);
+
+function toast(msg='✅ Salvo!', err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = err ? '#c0392b' : '#5eab52';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ══════════════════════════════════════════
+   NAVEGAÇÃO
+══════════════════════════════════════════ */
+const PAGE_INFO = {
+  inicio:         { title: 'Início',                   sub: 'Visão consolidada — todos os dados' },
+  controle:       { title: 'Controle na Mão',          sub: 'Relatório geral do aplicativo de gestão' },
+  pagamentos:     { title: 'Formas de Pagamento',       sub: 'Distribuição por modalidade de pagamento' },
+  'ifood-overview': { title: 'Visão iFood',            sub: 'Dados do Portal do Parceiro iFood' },
+  cardapio:       { title: 'Cardápio & Funil',          sub: 'Performance dos itens e conversão' },
+  logistica:      { title: 'Logística & Entregas',      sub: 'Tempos e desempenho das entregas' },
+  ocorrencias:    { title: 'Cancelamentos & Neg.',      sub: 'Problemas e tratativas com clientes' },
+  lancar:         { title: 'Lançar Movimento',          sub: 'Registre qualquer venda em segundos' },
+  trafego:        { title: 'Tráfego Pago',              sub: 'Resumo de investimentos em mídia paga' },
+  'meta-ads':     { title: 'Meta Ads',                  sub: 'Análise das campanhas Facebook & Instagram' },
+  caixa:          { title: 'Caixa & Metas',             sub: 'Saldo real e objetivos do mês' },
+};
+
+function navTo(page, mobileBtn) {
+  // Fecha o sidebar se estiver no mobile
+  document.getElementById('sidebar').classList.remove('open');
+  const ov = document.getElementById('sidebar-overlay');
+  if(ov) ov.classList.remove('show');
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const sideBtn = document.getElementById('nav-'+page);
+  if (sideBtn) sideBtn.classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  if (mobileBtn) mobileBtn.classList.add('active');
+  else { const mb = document.querySelector(`.bnav-btn[data-page="${page}"]`); if (mb) mb.classList.add('active'); }
+  const info = PAGE_INFO[page] || {};
+  const tt = document.getElementById('topbar-title');
+  const ts = document.getElementById('topbar-sub');
+  if (tt) tt.textContent = info.title || '';
+  if (ts) ts.textContent = info.sub || '';
+  // mostrar/ocultar filtro
+  const fb = document.getElementById('filter-bar');
+  const showFilter = ['inicio','controle','pagamentos'].includes(page);
+  if (fb) fb.style.display = showFilter ? 'flex' : 'none';
+  window.scrollTo(0, 0);
+  renderAll();
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if(sidebar) sidebar.classList.toggle('open');
+  const ov = document.getElementById('sidebar-overlay');
+  if(ov) ov.classList.toggle('show');
+}
+
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => navTo(btn.dataset.page));
+});
+
+/* ══════════════════════════════════════════
+   DATA/HORA
+══════════════════════════════════════════ */
+function initDateTime() {
+  const dias  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const now   = new Date();
+  const hora  = now.getHours();
+  const greet = hora < 12 ? 'Bom dia! ☀️' : hora < 18 ? 'Boa tarde! 🌞' : 'Boa noite! 🌙';
+  const dateStr = `${dias[now.getDay()]}, ${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
+  const hg = document.getElementById('home-greeting');
+  if (hg) hg.textContent = greet;
+  const sd = document.getElementById('sidebar-date-strong');
+  const ss = document.getElementById('sidebar-date-sub');
+  if (sd) sd.textContent = dateStr;
+  if (ss) ss.textContent = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')} · atualizado agora`;
+  const mhd = document.getElementById('mh-date');
+  if (mhd) mhd.textContent = `PAINEL · ${dias[now.getDay()]}, ${now.getDate()} ${meses[now.getMonth()]}`;
+  document.getElementById('data-input').value  = oggi();
+  document.getElementById('ifood-periodo').value = mesAtual();
+  document.getElementById('tf-semana').value = getWeekStr(now);
+}
+
+function getWeekStr(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yr = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const wk = Math.ceil((((d - yr) / 86400000) + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(wk).padStart(2,'0')}`;
+}
+
+/* ══════════════════════════════════════════
+   APEXCHARTS HELPERS
+══════════════════════════════════════════ */
+const CHART_DEFAULTS = {
+  toolbar:    { show: false },
+  fontFamily: "'Inter', sans-serif",
+  background: 'transparent',
+};
+const AXIS_STYLE = { colors: '#b09490', fontSize: '10px', fontWeight: '700' };
+const GRID_OPT   = { borderColor: '#3a1916', strokeDashArray: 4 };
+
+let charts = {};
+function renderChart(id, opts) {
+  if (charts[id]) { charts[id].destroy(); }
+  const el = document.getElementById(id);
+  if (!el) return;
+  charts[id] = new ApexCharts(el, opts);
+  charts[id].render();
+}
+
+/* ══════════════════════════════════════════
+   RENDER: INÍCIO
+══════════════════════════════════════════ */
+function renderInicio() {
+  const data = getControleData();
+  const total = sumField(data, 'total');
+  const vendas = sumField(data, 'num_vendas');
+  const pessoas = sumField(data, 'pessoas_atendidas');
+  const delivery_v = sumField(data, 'vendas_delivery');
+  const delivery_n = sumField(data, 'num_deliveries');
+  const ticket = data.length ? avgField(data, 'ticket_medio') : 0;
+  const m = DB.get('metas', {});
+
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText('home-receita', fmt(total));
+  const label = filtroMes === 'todos' ? `${data.length} meses acumulados` : data[0]?.periodo || '';
+  setText('home-receita-sub', label);
+  setText('home-ticket', fmt(ticket));
+  setText('home-ticket-sub', `média entre ${data.length} período(s)`);
+  setText('s-vendas', vendas.toLocaleString('pt-BR'));
+  setText('s-vendas-sub', `em ${data.length} período(s)`);
+  setText('s-pessoas', pessoas.toLocaleString('pt-BR'));
+  setText('s-ifood-plat', fmt(sumField(RELATORIOS.ifood_vendas.geral, 'valor_total')));
+  setText('s-ifood-plat-q', RELATORIOS.ifood_vendas.geral[0]?.total_vendas + ' pedidos');
+  setText('s-deliver', fmt(delivery_v));
+  setText('s-deliver-q', delivery_n + ' entregas');
+
+  if (m.total > 0) {
+    const p = Math.min((total/m.total)*100, 100).toFixed(0);
+    const pf = document.getElementById('home-prog');
+    if (pf) pf.style.width = p + '%';
+    setText('home-prog-txt', `${p}% da meta de ${fmt(m.total)}`);
+  } else {
+    setText('home-prog-txt', 'Configure uma meta para acompanhar');
+  }
+
+  // Pagamentos home
+  const pagEl = document.getElementById('home-pag-list');
+  if (pagEl) {
+    const credTotal = sumField(data, 'pag_credito');
+    const debTotal  = sumField(data, 'pag_debito');
+    const pixTotal  = sumField(data, 'pag_pix');
+    const tpag = credTotal + debTotal + pixTotal;
+    const pags = [
+      { icon: '💳', lbl: 'Crédito', val: credTotal, cor: '#8BA4B9' },
+      { icon: '💳', lbl: 'Débito',  val: debTotal,  cor: '#a78bfa' },
+      { icon: '🔵', lbl: 'PIX',     val: pixTotal,  cor: '#8BB97B' },
+    ];
+    pagEl.innerHTML = pags.map(p => {
+      const pct = tpag ? ((p.val/tpag)*100).toFixed(0) : 0;
+      return `<div class="channel-row">
+        <div style="display:flex;align-items:center;flex:1;">
+          <div class="ch-icon" style="background:${p.cor}22;color:${p.cor};border:1px solid ${p.cor}44;">${p.icon}</div>
+          <div><div class="ch-name">${p.lbl}</div><div class="ch-count">${pct}% do volume</div></div>
+        </div>
+        <div><div class="ch-val" style="color:${p.cor};">${fmt(p.val)}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // iFood box
+  const ifEl = document.getElementById('home-ifood-box');
+  if (ifEl) {
+    const g = RELATORIOS.ifood_vendas.geral[0];
+    const f = RELATORIOS.ifood_cardapio.funil[0];
+    ifEl.innerHTML = `
+      <div class="caixa-row"><span class="c-lbl">🛒 Total de Pedidos</span><span class="c-val" style="color:var(--gold);">${g.total_vendas}</span></div>
+      <div class="caixa-row"><span class="c-lbl">💰 Valor Total</span><span class="c-val" style="color:var(--green-s);">${fmt(g.valor_total)}</span></div>
+      <div class="caixa-row"><span class="c-lbl">🎫 Ticket Médio</span><span class="c-val">${fmt(g.ticket_medio)}</span></div>
+      <div class="caixa-row"><span class="c-lbl">🚪 Visitas na Loja</span><span class="c-val">${f.visitas}</span></div>
+      <div class="caixa-row"><span class="c-lbl">✅ Conversão</span><span class="c-val" style="color:var(--gold);">${f.conversao}%</span></div>
+      <div class="caixa-row"><span class="c-lbl">⭐ Novos Clientes</span><span class="c-val">${g.novos_clientes}</span></div>
+    `;
+  }
+
+  // Top itens
+  const tiEl = document.getElementById('home-top-itens');
+  if (tiEl) {
+    const itens = [...RELATORIOS.ifood_cardapio.itens].sort((a,b) => b.valor_total - a.valor_total).slice(0,5);
+    tiEl.innerHTML = itens.map((it, i) => {
+      const pos = i+1;
+      const cl = pos===1?'gold':pos===2?'silver':pos===3?'bronze':'';
+      return `<div class="item-rank">
+        <div class="item-pos ${cl}">${pos}</div>
+        <div class="item-info"><div class="item-nm">${it.nome}</div><div class="item-cat">${it.qtd_vendida} un. vendidas · conv. ${it.conversao}%</div></div>
+        <div class="item-stats"><div class="item-val">${fmt(it.valor_total)}</div><div class="item-ped">${it.pedidos} pedidos</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Gráfico evolução
+  const labels = RELATORIOS.controle.map(r => r.periodo.split(' ')[0]);
+  const vals   = RELATORIOS.controle.map(r => r.total);
+  renderChart('homeChart', {
+    series: [{ name: 'Receita Total', data: vals }],
+    chart: { ...CHART_DEFAULTS, type: 'bar', height: 220 },
+    colors: ['#DAAA3C'],
+    plotOptions: { bar: { borderRadius: 6, columnWidth: '55%' } },
+    dataLabels: { enabled: false },
+    xaxis: { categories: labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show: false },
+    grid: GRID_OPT,
+    tooltip: { theme:'dark', y:{ formatter: v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2}) } },
+  });
+}
+
+/* ══════════════════════════════════════════
+   RENDER: CONTROLE
+══════════════════════════════════════════ */
+function renderControle() {
+  const data = getControleData();
+  const total     = sumField(data, 'total');
+  const vendas    = sumField(data, 'num_vendas');
+  const pessoas   = sumField(data, 'pessoas_atendidas');
+  const ticket    = data.length ? avgField(data, 'ticket_medio') : 0;
+  const delivs    = sumField(data, 'num_deliveries');
+  const deliv_v   = sumField(data, 'vendas_delivery');
+  const canceladas = sumField(data, 'canceladas');
+
+  const statsEl = document.getElementById('controle-stats');
+  if (statsEl) {
+    statsEl.innerHTML = [
+      { lbl: 'Receita Total', val: fmt(total), sub: `${data.length} período(s)`, cor: 'var(--green-s)' },
+      { lbl: 'Nº de Vendas', val: vendas.toLocaleString(), sub: 'pedidos registrados', cor: 'var(--gold)' },
+      { lbl: 'Ticket Médio', val: fmt(ticket), sub: 'por venda', cor: 'var(--beige)' },
+      { lbl: 'Pessoas Atend.', val: pessoas.toLocaleString(), sub: 'clientes únicos', cor: '#8BA4B9' },
+      { lbl: 'Deliveries', val: delivs.toLocaleString(), sub: fmt(deliv_v)+' em vendas', cor: '#a78bfa' },
+    ].map(s => `<div class="stat-card"><div class="stat-lbl">${s.lbl}</div><div class="stat-val" style="color:${s.cor};">${s.val}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
+  }
+
+  // Breakdown financeiro
+  const bdEl = document.getElementById('controle-breakdown');
+  if (bdEl && data.length) {
+    const cred = sumField(data,'pag_credito'), deb = sumField(data,'pag_debito'), pix = sumField(data,'pag_pix');
+    const entrega = sumField(data,'taxa_entrega'), garcom = sumField(data,'taxa_garcom');
+    bdEl.innerHTML = `
+      <div class="caixa-row"><span class="c-lbl">💳 Crédito</span><span class="c-val" style="color:#8BA4B9;">${fmt(cred)}</span></div>
+      <div class="caixa-row"><span class="c-lbl">💳 Débito</span><span class="c-val" style="color:#a78bfa;">${fmt(deb)}</span></div>
+      <div class="caixa-row"><span class="c-lbl">🔵 PIX</span><span class="c-val" style="color:var(--green-s);">${fmt(pix)}</span></div>
+      <div class="caixa-row" style="border-top:1px solid var(--border);margin-top:4px;"><span class="c-lbl">🚚 Taxa de Entrega</span><span class="c-val">${fmt(entrega)}</span></div>
+      <div class="caixa-row"><span class="c-lbl">🍽️ Taxa de Garçom</span><span class="c-val">${fmt(garcom)}</span></div>
+      <div class="caixa-row" style="border-top:1px solid var(--border);margin-top:4px;"><span class="c-lbl">❌ Canceladas (valor)</span><span class="c-val" style="color:var(--red-a);">${fmt(canceladas)}</span></div>
+    `;
+  }
+
+  // Tabela
+  const tbody = document.getElementById('controle-tbody');
+  if (tbody) {
+    tbody.innerHTML = data.map(r => `<tr>
+      <td style="font-weight:800;white-space:nowrap;">${r.periodo}</td>
+      <td>${r.num_vendas}</td>
+      <td style="color:var(--green-s);font-weight:800;">${fmt(r.total)}</td>
+      <td style="color:var(--gold);">${fmt(r.ticket_medio)}</td>
+      <td>${r.comandas_usadas}</td>
+      <td>${r.pessoas_atendidas}</td>
+      <td style="color:var(--red-a);">${fmt(r.canceladas)}</td>
+      <td>${r.num_deliveries}</td>
+      <td style="color:#a78bfa;">${fmt(r.vendas_delivery)}</td>
+    </tr>`).join('');
+  }
+
+  // Gráfico comparativo
+  const meses = RELATORIOS.controle.map(r => r.periodo.split(' ')[0]);
+  renderChart('controleChart', {
+    series: [
+      { name: 'Receita Total', data: RELATORIOS.controle.map(r => r.total) },
+      { name: 'Delivery',      data: RELATORIOS.controle.map(r => r.vendas_delivery) },
+    ],
+    chart: { ...CHART_DEFAULTS, type: 'bar', height: 240, stacked: false },
+    colors: ['#DAAA3C','#a78bfa'],
+    plotOptions: { bar: { borderRadius: 5, columnWidth: '50%' } },
+    dataLabels: { enabled: false },
+    xaxis: { categories: meses, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show: false },
+    grid: GRID_OPT,
+    legend: { labels:{colors:'#b09490'}, fontSize:'11px' },
+    tooltip: { theme:'dark', y:{ formatter: v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2}) } },
+  });
+}
+
+/* ══════════════════════════════════════════
+   RENDER: PAGAMENTOS
+══════════════════════════════════════════ */
+function renderPagamentos() {
+  const data = getControleData();
+  const cred = sumField(data,'pag_credito');
+  const deb  = sumField(data,'pag_debito');
+  const pix  = sumField(data,'pag_pix');
+  const total = cred + deb + pix;
+  const pct = v => total ? ((v/total)*100).toFixed(1) + '%' : '0%';
+
+  const heroEl = document.getElementById('pag-hero-stats');
+  if (heroEl) {
+    heroEl.innerHTML = [
+      { lbl:'Crédito', val:fmt(cred), sub:pct(cred), cor:'#8BA4B9' },
+      { lbl:'Débito',  val:fmt(deb),  sub:pct(deb),  cor:'#a78bfa' },
+      { lbl:'PIX',     val:fmt(pix),  sub:pct(pix),  cor:' var(--green-s)' },
+    ].map(s => `<div class="stat-card"><div class="stat-lbl">${s.lbl}</div><div class="stat-val" style="color:${s.cor};">${s.val}</div><div class="stat-sub">${s.sub} do total</div></div>`).join('');
+  }
+
+  // Canal list
+  const canEl = document.getElementById('pag-canal-list');
+  if (canEl) {
+    const pags = [
+      { icon:'💳', lbl:'Crédito', val:cred, cor:'#8BA4B9', badge:'b-blue' },
+      { icon:'💳', lbl:'Débito',  val:deb,  cor:'#a78bfa', badge:'b-purple' },
+      { icon:'🔵', lbl:'PIX',     val:pix,  cor:'#8BB97B', badge:'b-green' },
+    ];
+    canEl.innerHTML = pags.map(p => `<div class="channel-row">
+      <div style="display:flex;align-items:center;flex:1;">
+        <div class="ch-icon" style="background:${p.cor}22;color:${p.cor};border:1px solid ${p.cor}44;">${p.icon}</div>
+        <div><div class="ch-name">${p.lbl}</div><div class="ch-count">${pct(p.val)} do volume</div></div>
+      </div>
+      <div><div class="ch-val" style="color:${p.cor};">${fmt(p.val)}</div><div class="ch-pct"><span class="badge ${p.badge}">${pct(p.val)}</span></div></div>
+    </div>`).join('');
+  }
+
+  // Gráfico de linha por mês
+  renderChart('pagChart', {
+    series: [
+      { name: 'Crédito', data: RELATORIOS.controle.map(r => r.pag_credito) },
+      { name: 'Débito',  data: RELATORIOS.controle.map(r => r.pag_debito) },
+      { name: 'PIX',     data: RELATORIOS.controle.map(r => r.pag_pix) },
+    ],
+    chart: { ...CHART_DEFAULTS, type: 'bar', height: 260, stacked: true, stackType: '100%' },
+    colors: ['#8BA4B9','#a78bfa','#8BB97B'],
+    plotOptions: { bar: { borderRadius: 0, columnWidth: '55%' } },
+    dataLabels: { enabled: true, style:{ fontSize:'10px', fontWeight:'700' }, formatter: v => v.toFixed(0)+'%' },
+    xaxis: { categories: RELATORIOS.controle.map(r=>r.periodo.split(' ')[0]), axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show: false },
+    grid: GRID_OPT,
+    legend: { labels:{colors:'#b09490'}, fontSize:'11px' },
+    tooltip: { theme:'dark', y:{ formatter: v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2}) } },
+  });
+}
+
+/* ══════════════════════════════════════════
+   RENDER: IFOOD OVERVIEW
+══════════════════════════════════════════ */
+function renderIfoodOverview() {
+  const g = RELATORIOS.ifood_vendas.geral[0];
+  const f = RELATORIOS.ifood_cardapio.funil[0];
+
+  const statsEl = document.getElementById('ifood-overview-stats');
+  if (statsEl) {
+    statsEl.innerHTML = [
+      { lbl:'Total Pedidos', val: g.total_vendas, sub:'no período', cor:'var(--gold)' },
+      { lbl:'Valor Total',   val: fmt(g.valor_total), sub:'bruto iFood', cor:'var(--green-s)' },
+      { lbl:'Ticket Médio',  val: fmt(g.ticket_medio), sub:'por pedido', cor:'var(--beige)' },
+      { lbl:'Novos Clientes',val: g.novos_clientes, sub:'primeiros pedidos', cor:'#a78bfa' },
+    ].map(s => `<div class="stat-card"><div class="stat-lbl">${s.lbl}</div><div class="stat-val" style="color:${s.cor};">${s.val}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
+  }
+
+  // Dias da semana
+  const diasEl = document.getElementById('ifood-dias-list');
+  if (diasEl) {
+    const dias = [...RELATORIOS.ifood_vendas.dias].sort((a,b) => b.total - a.total);
+    const maxD = Math.max(...dias.map(d => d.total));
+    diasEl.innerHTML = dias.map(d => `<div class="hora-row">
+      <div class="hora-lbl">${d.dia}</div>
+      <div class="hora-bar-track"><div class="hora-bar-fill" style="width:${maxD?(d.total/maxD*100):0}%;"></div></div>
+      <div class="hora-val">${d.total}</div>
+    </div>`).join('');
+  }
+
+  // Formas de pagamento iFood
+  const pagEl = document.getElementById('ifood-pag-list');
+  if (pagEl) {
+    const pags = [...RELATORIOS.ifood_vendas.pagamentos].sort((a,b) => b.total - a.total);
+    const maxP = Math.max(...pags.map(p => p.total));
+    pagEl.innerHTML = `<div style="padding:14px 16px;">` + pags.map(p => `<div class="hora-row">
+      <div class="hora-lbl">${p.forma}</div>
+      <div class="hora-bar-track"><div class="hora-bar-fill" style="width:${maxP?(p.total/maxP*100):0}%;background:#8BA4B9;"></div></div>
+      <div class="hora-val">${p.total}</div>
+    </div>`).join('') + `</div>`;
+  }
+
+  // Horários FDS
+  const fdsEl = document.getElementById('ifood-hora-fds-bars');
+  const semEl = document.getElementById('ifood-hora-sem-bars');
+  const fds = RELATORIOS.ifood_vendas.horarios.filter(h => h.periodo_tipo === 'Final de semana');
+  const sem = RELATORIOS.ifood_vendas.horarios.filter(h => h.periodo_tipo === 'Dia de semana');
+  const maxH = Math.max(...RELATORIOS.ifood_vendas.horarios.map(h => h.total_vendas));
+
+  if (fdsEl) fdsEl.innerHTML = fds.map(h => `<div class="hora-row">
+    <div class="hora-lbl">${h.horario}</div>
+    <div class="hora-bar-track"><div class="hora-bar-fill" style="width:${maxH?(h.total_vendas/maxH*100):0}%;"></div></div>
+    <div class="hora-val">${h.total_vendas}</div>
+  </div>`).join('');
+
+  if (semEl) semEl.innerHTML = sem.map(h => `<div class="hora-row">
+    <div class="hora-lbl">${h.horario}</div>
+    <div class="hora-bar-track"><div class="hora-bar-fill" style="width:${maxH?(h.total_vendas/maxH*100):0}%;background:#8BA4B9;"></div></div>
+    <div class="hora-val">${h.total_vendas}</div>
+  </div>`).join('');
+
+  renderIfoodHist();
+}
+
+/* ══════════════════════════════════════════
+   RENDER: CARDÁPIO
+══════════════════════════════════════════ */
+function renderCardapio() {
+  const f = RELATORIOS.ifood_cardapio.funil[0];
+  const itens = RELATORIOS.ifood_cardapio.itens;
+
+  // Stats funil
+  const funilStEl = document.getElementById('funil-stats');
+  if (funilStEl) {
+    funilStEl.innerHTML = [
+      { lbl:'Visitas', val:f.visitas, cor:'#8BA4B9' },
+      { lbl:'Visualizações', val:f.visualizacoes, cor:'#a78bfa' },
+      { lbl:'Adicionaram à Sacola', val:f.sacola, cor:'var(--gold)' },
+      { lbl:'Pedidos Concluídos', val:f.concluidos, cor:'var(--green-s)' },
+    ].map(s => `<div class="stat-card"><div class="stat-lbl">${s.lbl}</div><div class="stat-val" style="color:${s.cor};">${s.val}</div><div class="stat-sub"><span class="badge b-gold">${f.conversao}% conv.</span></div></div>`).join('');
+  }
+
+  // Funil visual
+  const funilVEl = document.getElementById('funil-visual');
+  if (funilVEl) {
+    const steps = [
+      { icon:'👁️', nm:'Visitas', val:f.visitas, bg:'#1C202B', bord:'#303952', cor:'#8BA4B9' },
+      { icon:'📋', nm:'Visualizações', val:f.visualizacoes, bg:'#2A1C3C', bord:'#4A3564', cor:'#a78bfa' },
+      { icon:'🛒', nm:'Sacola', val:f.sacola, bg:'#403010', bord:'#8C6B26', cor:'var(--gold)' },
+      { icon:'✅', nm:'Concluídos', val:f.concluidos, bg:'#1E281C', bord:'#3A4D36', cor:'var(--green-s)' },
+    ];
+    funilVEl.innerHTML = steps.map(s => `<div class="funil-step">
+      <div class="funil-icon" style="background:${s.bg};border:1px solid ${s.bord};">${s.icon}</div>
+      <div><div class="funil-nm">${s.nm}</div><div class="funil-sub">${((s.val/f.visitas)*100).toFixed(0)}% das visitas</div></div>
+      <div class="funil-val" style="color:${s.cor};">${s.val}</div>
+    </div>`).join('');
+  }
+
+  // Gráfico funil
+  renderChart('funilChart', {
+    series: [{ name:'Visitantes', data:[f.visitas, f.visualizacoes, f.sacola, f.revisao, f.concluidos] }],
+    chart: { ...CHART_DEFAULTS, type:'bar', height:220 },
+    colors: ['#DAAA3C'],
+    plotOptions: { bar: { horizontal: true, borderRadius:5, barHeight:'60%' } },
+    dataLabels: { enabled: true, style:{ colors:['#1B0707'], fontWeight:'800', fontSize:'11px' } },
+    xaxis: { categories:['Visitas','Visualiz.','Sacola','Revisão','Concluídos'], labels:{style:AXIS_STYLE} },
+    yaxis: { labels:{style:AXIS_STYLE} },
+    grid: GRID_OPT,
+    tooltip: { theme:'dark' },
   });
 
-  // ApexCharts Dark Mode Earthy
-  var options = {
-    series: [{ name: 'Receita Diária', data: [900, 1100, 1600, 1200, 2400, 3100] }],
-    chart: { type: 'area', height: 180, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-    colors: ['#DAAA3C'], // Gold
-    fill: { 
-      type: 'gradient', 
-      gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.02, stops: [0, 100] } 
-    },
-    dataLabels: { enabled: false },
-    stroke: { curve: 'smooth', width: 3 },
-    xaxis: { 
-      categories: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Hoje'], 
-      axisBorder: { show: false }, 
-      axisTicks: { show: false }, 
-      labels: { style: { colors: '#BA9894', fontSize: '10px', fontWeight: 600 } } 
-    },
-    yaxis: { show: false }, 
-    grid: { borderColor: '#4D211C', strokeDashArray: 4, yaxis: { lines: { show: true } } },
-    tooltip: { theme: 'dark' }
-  };
-  new ApexCharts(document.querySelector("#homeChart"), options).render();
+  // Ranking por receita
+  const rEl = document.getElementById('itens-receita');
+  if (rEl) {
+    const sorted = [...itens].sort((a,b) => b.valor_total - a.valor_total);
+    rEl.innerHTML = sorted.map((it,i) => `<div class="item-rank">
+      <div class="item-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+      <div class="item-info"><div class="item-nm">${it.nome}</div><div class="item-cat">Conv.: ${it.conversao}%</div></div>
+      <div class="item-stats"><div class="item-val">${fmt(it.valor_total)}</div><div class="item-ped">${it.qtd_vendida} un.</div></div>
+    </div>`).join('');
+  }
 
-  // Data Dinâmica no Topo
-  const dias = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-  const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-  const hoje = new Date();
-  document.getElementById('dynamic-date').innerHTML = `PAINEL GERENCIAL · ${dias[hoje.getDay()]}, ${hoje.getDate()} ${meses[hoje.getMonth()]}`;
+  // Ranking por pedidos
+  const pEl = document.getElementById('itens-pedidos');
+  if (pEl) {
+    const sorted = [...itens].sort((a,b) => b.pedidos - a.pedidos);
+    pEl.innerHTML = sorted.map((it,i) => `<div class="item-rank">
+      <div class="item-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+      <div class="item-info"><div class="item-nm">${it.nome}</div><div class="item-cat">${it.visitas} visitas</div></div>
+      <div class="item-stats"><div class="item-val" style="color:var(--gold);">${it.pedidos}</div><div class="item-ped">pedidos</div></div>
+    </div>`).join('');
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER: LOGÍSTICA
+══════════════════════════════════════════ */
+function renderLogistica() {
+  const log = RELATORIOS.ifood_logistica;
+  const avgPreparo   = log.reduce((s,e) => s+e.tempo_preparo, 0) / log.length;
+  const avgRealizado = log.reduce((s,e) => s+e.tempo_realizado, 0) / log.length;
+  const avgPrometido = log.reduce((s,e) => s+e.tempo_prometido, 0) / log.length;
+  const semAtraso    = log.filter(e => e.tempo_atraso === 0).length;
+
+  const sEl = document.getElementById('log-stats');
+  if (sEl) {
+    sEl.innerHTML = [
+      { lbl:'Entregas', val:log.length, sub:'no período', cor:'var(--gold)' },
+      { lbl:'Preparo Médio', val:avgPreparo.toFixed(1)+' min', sub:'tempo de produção', cor:'#8BA4B9' },
+      { lbl:'Entrega Média', val:avgRealizado.toFixed(1)+' min', sub:'tempo realizado', cor:'var(--green-s)' },
+      { lbl:'Sem Atraso', val:semAtraso+'/'+log.length, sub:'dentro do prazo', cor:'var(--green-s)' },
+    ].map(s => `<div class="stat-card"><div class="stat-lbl">${s.lbl}</div><div class="stat-val" style="color:${s.cor};">${s.val}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
+  }
+
+  // Tabela
+  const tbody = document.getElementById('log-tbody');
+  if (tbody) {
+    tbody.innerHTML = log.map(e => `<tr>
+      <td style="font-weight:800;">#${e.id_curto}</td>
+      <td style="white-space:nowrap;">${e.data.split(' ')[0]}</td>
+      <td><span class="badge ${e.turno==='ALMOCO'?'b-gold':'b-blue'}">${e.turno}</span></td>
+      <td><span class="badge b-green">${e.status}</span></td>
+      <td>${e.tempo_preparo.toFixed(1)}</td>
+      <td>${e.tempo_alocacao.toFixed(1)}</td>
+      <td style="color:var(--green-s);font-weight:800;">${e.tempo_realizado.toFixed(1)}</td>
+      <td style="color:var(--muted);">${e.tempo_prometido.toFixed(0)}</td>
+      <td style="color:${e.tempo_atraso>0?'var(--red-a)':'var(--green-s)'};">${e.tempo_atraso.toFixed(1)}</td>
+    </tr>`).join('');
+  }
+
+  // Turnos
+  const turnoEl = document.getElementById('log-turno');
+  if (turnoEl) {
+    const almocos = log.filter(e => e.turno === 'ALMOCO').length;
+    const jantares = log.filter(e => e.turno === 'JANTAR').length;
+    turnoEl.innerHTML = `
+      <div class="caixa-row"><span class="c-lbl">☀️ Almoço</span><span class="c-val" style="color:var(--gold);">${almocos} entregas (${((almocos/log.length)*100).toFixed(0)}%)</span></div>
+      <div class="caixa-row"><span class="c-lbl">🌙 Jantar</span><span class="c-val" style="color:#8BA4B9;">${jantares} entregas (${((jantares/log.length)*100).toFixed(0)}%)</span></div>
+      <div class="caixa-row" style="border-top:1px solid var(--border);"><span class="c-lbl">⏱️ Mais rápido</span><span class="c-val" style="color:var(--green-s);">${Math.min(...log.map(e=>e.tempo_realizado)).toFixed(1)} min</span></div>
+      <div class="caixa-row"><span class="c-lbl">⏳ Mais demorado</span><span class="c-val" style="color:var(--red-a);">${Math.max(...log.map(e=>e.tempo_realizado)).toFixed(1)} min</span></div>
+    `;
+  }
+
+  // Gráfico
+  renderChart('logChart', {
+    series: [
+      { name:'Preparo (min)',   data: log.map(e => parseFloat(e.tempo_preparo.toFixed(1))) },
+      { name:'Entrega (min)',   data: log.map(e => parseFloat(e.tempo_realizado.toFixed(1))) },
+      { name:'Prometido (min)', data: log.map(e => parseFloat(e.tempo_prometido.toFixed(1))) },
+    ],
+    chart: { ...CHART_DEFAULTS, type:'line', height:200 },
+    colors: ['#a78bfa','#8BB97B','#b09490'],
+    stroke: { curve:'smooth', width:2, dashArray:[0,0,4] },
+    dataLabels: { enabled: false },
+    xaxis: { categories: log.map(e=>'#'+e.id_curto), axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show: false },
+    grid: GRID_OPT,
+    legend: { labels:{colors:'#b09490'}, fontSize:'10px' },
+    tooltip: { theme:'dark', y:{ formatter: v => v+' min' } },
+  });
+}
+
+/* ══════════════════════════════════════════
+   RENDER: OCORRÊNCIAS
+══════════════════════════════════════════ */
+function renderOcorrencias() {
+  const cancelEl = document.getElementById('cancel-list');
+  if (cancelEl) {
+    const c = RELATORIOS.ifood_cancelamentos;
+    if (!c.length) {
+      cancelEl.innerHTML = '<div class="empty"><div class="ico">✅</div><p>Nenhum cancelamento registrado.</p></div>';
+    } else {
+      cancelEl.innerHTML = `<div style="padding:14px 16px;">` + c.map(r => `
+        <div style="background:var(--s3);border-radius:12px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+            <div>
+              <div style="font-size:13px;font-weight:800;">Pedido #${r.id_pedido}</div>
+              <div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;">${r.data} · ${r.turno}</div>
+            </div>
+            <span class="badge b-red">${r.status}</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;color:var(--red-a);margin-bottom:4px;">Motivo: ${r.motivo}</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:600;">
+            <span>Origem: ${r.origem}</span>
+            <span style="color:var(--red-a);font-weight:800;">${fmt(r.valor_pedido)}</span>
+          </div>
+        </div>`).join('') + `</div>`;
+    }
+  }
+
+  const negEl = document.getElementById('neg-list');
+  if (negEl) {
+    const n = RELATORIOS.ifood_negociacoes;
+    if (!n.length) {
+      negEl.innerHTML = '<div class="empty"><div class="ico">🤝</div><p>Nenhuma negociação registrada.</p></div>';
+    } else {
+      negEl.innerHTML = `<div style="padding:14px 16px;">` + n.map(r => `
+        <div style="background:var(--s3);border-radius:12px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+            <div>
+              <div style="font-size:13px;font-weight:800;">Pedido #${r.id_pedido}</div>
+              <div style="font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;">${r.data} · ${r.turno}</div>
+            </div>
+            <span class="badge b-gold">${r.status}</span>
+          </div>
+          <div style="font-size:12px;font-weight:600;color:var(--gold);margin-bottom:4px;">Motivo: ${r.motivo}</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;">Iniciado por: ${r.quem_iniciou} · Resposta: ${r.resposta_loja}</div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;">
+            <span style="color:var(--muted);">Reembolso: <span style="color:var(--red-a);">${fmt(r.valor_reembolso)}</span></span>
+            <span style="color:var(--muted);">Pedido: <span style="color:var(--beige);">${fmt(r.valor_pedido)}</span></span>
+          </div>
+        </div>`).join('') + `</div>`;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════
+   PILLS CANAL (LANÇAR)
+══════════════════════════════════════════ */
+document.querySelectorAll('#canal-pills .pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('#canal-pills .pill').forEach(x => x.classList.remove('sel'));
+    p.classList.add('sel');
+    document.getElementById('canal-input').value = p.dataset.val;
+  });
+});
+
+/* ══════════════════════════════════════════
+   LANÇAR VENDA
+══════════════════════════════════════════ */
+function lancarVenda() {
+  const canal = document.getElementById('canal-input').value;
+  const valor = parseFloat(document.getElementById('val-input').value);
+  const pagto = document.getElementById('pagto-input').value;
+  const data  = document.getElementById('data-input').value;
+  const qtd   = parseInt(document.getElementById('qtd-input').value) || 1;
+  const obs   = document.getElementById('obs-input').value.trim();
+  if (!valor || valor <= 0) { toast('❌ Informe um valor válido!', true); return; }
+  if (!data)                { toast('❌ Informe a data!', true); return; }
+  const lst = DB.get('lancamentos', []);
+  lst.push({ id: Date.now(), canal, valor, pagto, data, qtd, obs, ts: new Date().toISOString() });
+  DB.set('lancamentos', lst);
+  document.getElementById('val-input').value = '';
+  document.getElementById('qtd-input').value = '';
+  document.getElementById('obs-input').value = '';
+  toast('✅ Movimento registrado!');
+  renderExtrato();
+}
+const CICONS = {
+  presencial:    { icon:'🏠', cor:'#DAAA3C',  label:'Presencial' },
+  whatsapp:      { icon:'💬', cor:'#25D366',  label:'WhatsApp' },
+  ifood:         { icon:'🔴', cor:'#c51c1c',  label:'iFood' },
+  instadelivery: { icon:'📦', cor:'#a78bfa',  label:'InstaDelivery' },
+  site:          { icon:'🌐', cor:'#4A90D9',  label:'Site' },
+};
+function renderExtrato() {
+  const lst = DB.get('lancamentos', []);
+  const el  = document.getElementById('extrato-list');
+  if (!lst.length) { el.innerHTML = '<div class="empty"><div class="ico">📋</div><p>Nenhum lançamento ainda.</p></div>'; return; }
+  const rec = [...lst].sort((a,b) => b.ts.localeCompare(a.ts)).slice(0,20);
+  el.innerHTML = rec.map(l => {
+    const cfg = CICONS[l.canal] || { icon:'💰', cor:'var(--gold)', label: l.canal };
+    const dtS = new Date(l.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    return `<div class="extrato-item">
+      <div style="display:flex;align-items:center;flex:1;min-width:0;">
+        <div class="ext-dot" style="background:${cfg.cor}22;color:${cfg.cor};border:1px solid ${cfg.cor}44;">${cfg.icon}</div>
+        <div style="min-width:0;"><div class="ext-name">${cfg.label}${l.obs?' · '+l.obs:''}</div><div class="ext-meta">${dtS} · ${l.qtd>1?l.qtd+' pedidos · ':''}${l.pagto}</div></div>
+      </div>
+      <div class="ext-val" style="color:var(--green-s);">+${fmt(l.valor)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   IFOOD MANUAL
+══════════════════════════════════════════ */
+function salvarIfood() {
+  const periodo  = document.getElementById('ifood-periodo').value;
+  const bruto    = parseFloat(document.getElementById('ifood-bruto').value) || 0;
+  const comissao = parseFloat(document.getElementById('ifood-comissao').value) || 0;
+  const liquido  = parseFloat(document.getElementById('ifood-liquido').value) || 0;
+  const qtd      = parseInt(document.getElementById('ifood-qtd').value) || 0;
+  if (!periodo) { toast('❌ Informe o período!',true); return; }
+  if (!bruto)   { toast('❌ Informe o faturamento!',true); return; }
+  const regs = DB.get('ifood', []);
+  const idx  = regs.findIndex(r => r.periodo === periodo);
+  const novo = { periodo, bruto, comissao, liquido, qtd, ts: new Date().toISOString() };
+  if (idx >= 0) regs[idx] = novo; else regs.push(novo);
+  DB.set('ifood', regs);
+  toast('✅ Dados iFood salvos!');
+  renderIfoodHist();
+}
+function renderIfoodHist() {
+  const regs = DB.get('ifood', []);
+  const el   = document.getElementById('ifood-hist-box');
+  if (!el) return;
+  if (!regs.length) { el.innerHTML = '<div class="empty"><div class="ico">📊</div><p>Nenhum registro salvo manualmente.</p></div>'; return; }
+  el.innerHTML = `<table class="tbl"><thead><tr><th>Período</th><th>Bruto</th><th>Comissão</th><th>Líquido</th><th>Pedidos</th></tr></thead><tbody>
+  ${[...regs].sort((a,b)=>b.periodo.localeCompare(a.periodo)).map(r => {
+    const pct = r.bruto ? ((r.comissao/r.bruto)*100).toFixed(0)+'%' : '—';
+    return `<tr><td style="font-weight:800;">${r.periodo}</td><td style="color:var(--green-s);">${fmt(r.bruto)}</td><td style="color:var(--red-a);">${fmt(r.comissao)} <small>(${pct})</small></td><td style="color:var(--gold);font-weight:800;">${fmt(r.liquido||(r.bruto-r.comissao))}</td><td>${r.qtd}</td></tr>`;
+  }).join('')}
+  </tbody></table>`;
+}
+
+/* ══════════════════════════════════════════
+   TRÁFEGO
+══════════════════════════════════════════ */
+function salvarTrafego() {
+  const semana  = document.getElementById('tf-semana').value;
+  const meta    = parseFloat(document.getElementById('tf-meta').value) || 0;
+  const google  = parseFloat(document.getElementById('tf-google').value) || 0;
+  const pedidos = parseInt(document.getElementById('tf-pedidos').value) || 0;
+  if (!semana)          { toast('❌ Informe a semana!',true); return; }
+  if (!meta && !google) { toast('❌ Informe pelo menos um valor!',true); return; }
+  const regs = DB.get('trafego', []);
+  const idx  = regs.findIndex(r => r.semana === semana);
+  const novo = { semana, meta, google, pedidos, total: meta+google, ts: new Date().toISOString() };
+  if (idx >= 0) regs[idx] = novo; else regs.push(novo);
+  DB.set('trafego', regs);
+  toast('✅ Semana de tráfego salva!');
+  renderTrafegoHist();
+}
+function renderTrafegoHist() {
+  const regs = DB.get('trafego', []);
+  const el   = document.getElementById('tf-hist');
+  if (!el) return;
+  if (!regs.length) { el.innerHTML = '<div class="empty" style="background:var(--s2);border:1px solid var(--border);border-radius:14px;"><div class="ico">📣</div><p>Nenhuma semana registrada.</p></div>'; return; }
+  el.innerHTML = [...regs].sort((a,b)=>b.semana.localeCompare(a.semana)).map(r => `
+    <div class="week-card">
+      <div><div class="week-lbl">${r.semana.replace('-W',' · Semana ')}</div><div class="week-sub">Meta: ${fmt(r.meta)} · Google: ${fmt(r.google)}${r.pedidos?' · '+r.pedidos+' ped.':''}</div></div>
+      <div class="week-val">${fmt(r.total)}</div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════
+   METAS
+══════════════════════════════════════════ */
+function abrirModalMetas() {
+  const m = DB.get('metas', {});
+  document.getElementById('m-total').value = m.total || '';
+  document.getElementById('m-ifood').value = m.ifood || '';
+  document.getElementById('m-pres').value  = m.pres  || '';
+  document.getElementById('m-ads').value   = m.ads   || '';
+  document.getElementById('modal-metas').classList.add('open');
+}
+function fecharModal() { document.getElementById('modal-metas').classList.remove('open'); }
+document.getElementById('modal-metas').addEventListener('click', function(e) { if (e.target === this) fecharModal(); });
+function salvarMetas() {
+  const m = {
+    total: parseFloat(document.getElementById('m-total').value) || 0,
+    ifood: parseFloat(document.getElementById('m-ifood').value) || 0,
+    pres:  parseFloat(document.getElementById('m-pres').value)  || 0,
+    ads:   parseFloat(document.getElementById('m-ads').value)   || 0,
+  };
+  DB.set('metas', m);
+  fecharModal();
+  toast('✅ Metas salvas!');
+  renderAll();
+}
+
+function renderMetas() {
+  const m = DB.get('metas', {});
+  const data = getControleData();
+  const total = sumField(data,'total');
+  const el = document.getElementById('metas-container');
+  if (!m.total) {
+    el.innerHTML = '<div class="empty" style="background:var(--s2);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;"><div class="ico">🎯</div><p>Nenhuma meta configurada.<br>Clique em "Configurar" acima.</p></div>';
+    return;
+  }
+  const blocos = [
+    { label:'Faturamento Total', atual:total, meta:m.total, cor:'#8BB97B' },
+    { label:'iFood',             atual:RELATORIOS.ifood_vendas.geral[0]?.valor_total||0, meta:m.ifood, cor:'#f87171' },
+    { label:'Presencial + Zap',  atual:0, meta:m.pres, cor:'#DAAA3C' },
+    { label:'Limite de Ads',     atual:DB.get('trafego',[]).reduce((a,r)=>a+(r.total||0),0), meta:m.ads, cor:'#D47C70', rev:true },
+  ].filter(b => b.meta > 0);
+  el.innerHTML = blocos.map(b => {
+    const p = Math.min((b.atual/b.meta)*100,100).toFixed(0);
+    const over = b.rev && b.atual > b.meta;
+    const cor  = over ? '#D47C70' : b.cor;
+    return `<div class="meta-block">
+      <div class="meta-top"><div class="meta-nm">${b.label}</div><div class="meta-pr">${b.rev?'Limite':'Meta'}: ${fmt(b.meta)}</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+        <div class="meta-cur" style="color:${cor};">${fmt(b.atual)}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);">${p}% ${b.rev?'utilizado':'atingido'}</div>
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:${p}%;background:${cor};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderCaixa() {
+  const data = getControleData();
+  const total = sumField(data,'total');
+  const ads = DB.get('trafego',[]).reduce((a,r)=>a+(r.total||0),0);
+  const liq = total - ads;
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText('cx-saldo', fmt(liq));
+  setText('cx-bruta', fmt(total));
+  setText('cx-comis', '- R$ 0,00'); // sem dados manuais
+  setText('cx-ads',   '- '+fmt(ads));
+  setText('cx-liq2',   fmt(liq));
+  const cs = document.getElementById('cx-saldo');
+  if (cs) cs.style.color = liq >= 0 ? 'var(--gold)' : 'var(--red-a)';
+  renderMetas();
+}
+
+function renderMetaAdsKpis(containerId, size) {
+  const ma = RELATORIOS.meta_ads;
+  const totalGasto     = ma.por_mes.reduce((s,m) => s + m.valor_total, 0);
+  const totalImpressoes= ma.por_mes.reduce((s,m) => s + m.impressoes, 0);
+  const totalCliques   = ma.por_mes.reduce((s,m) => s + m.cliques, 0);
+  const totalAlcance   = ma.por_mes.reduce((s,m) => s + m.alcance, 0);
+  const totalResultados= ma.por_mes.reduce((s,m) => s + m.resultados, 0);
+  const cpm  = totalImpressoes ? (totalGasto / totalImpressoes * 1000) : 0;
+  const cpc  = totalCliques    ? (totalGasto / totalCliques) : 0;
+  const ctr  = totalImpressoes ? (totalCliques / totalImpressoes * 100) : 0;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const kpis = size === 'full'
+    ? [
+        { lbl:'Gasto Total',      val: fmt(totalGasto),                              sub:'Nov/25–Abr/26',          cor:'var(--beige)' },
+        { lbl:'Impressões',       val: totalImpressoes.toLocaleString('pt-BR'),       sub:'total no período',       cor:'var(--gold)' },
+        { lbl:'Cliques no Link',  val: totalCliques.toLocaleString('pt-BR'),          sub:'cliques registrados',    cor:'var(--beige)' },
+        { lbl:'Alcance Total',    val: totalAlcance.toLocaleString('pt-BR'),          sub:'pessoas únicas',         cor:'var(--beige)' },
+        { lbl:'Resultados',       val: totalResultados.toLocaleString('pt-BR'),       sub:'ações geradas',          cor:'var(--beige)' },
+      ]
+    : [
+        { lbl:'Gasto Total Meta', val: fmt(totalGasto),                              sub:'Nov/25–Abr/26',          cor:'var(--beige)' },
+        { lbl:'Impressões',       val: totalImpressoes.toLocaleString('pt-BR'),       sub:'visualizações',          cor:'var(--gold)' },
+        { lbl:'Alcance',          val: totalAlcance.toLocaleString('pt-BR'),          sub:'pessoas únicas',         cor:'var(--beige)' },
+        { lbl:'CPM',              val: 'R$ '+cpm.toFixed(2),                          sub:'por 1k impressões',      cor:'var(--beige)' },
+      ];
+  el.innerHTML = kpis.map(k => `<div class="stat-card"><div class="stat-lbl">${k.lbl}</div><div class="stat-val font-brand" style="color:${k.cor};font-size:32px;">${k.val}</div><div class="stat-sub">${k.sub}</div></div>`).join('');
+}
+
+function renderMetaAdsCharts() {
+  const ma = RELATORIOS.meta_ads;
+  const labels = ma.por_mes.map(m => m.label);
+
+  renderChart('tfMetaChart', {
+    series: [{ name: 'Gasto (R$)', data: ma.por_mes.map(m => parseFloat(m.valor_total.toFixed(2))) }],
+    chart: { ...CHART_DEFAULTS, type:'bar', height:220 },
+    colors: ['#1877F2'],
+    plotOptions: { bar: { borderRadius:5, columnWidth:'55%' } },
+    dataLabels: { enabled:false },
+    xaxis: { categories:labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show:false },
+    grid: GRID_OPT,
+    tooltip: { theme:'dark', y:{ formatter: v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2}) } },
+  });
+
+  renderChart('tfAlcanceChart', {
+    series: [
+      { name:'Alcance',    data: ma.por_mes.map(m => m.alcance) },
+      { name:'Impressões', data: ma.por_mes.map(m => m.impressoes) },
+    ],
+    chart: { ...CHART_DEFAULTS, type:'bar', height:220 },
+    colors: ['#DAAA3C','#a78bfa'],
+    plotOptions: { bar: { borderRadius:4, columnWidth:'65%', grouped:true } },
+    dataLabels: { enabled:false },
+    xaxis: { categories:labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show:false },
+    grid: GRID_OPT,
+    legend: { labels:{colors:'#b09490'}, fontSize:'10px' },
+    tooltip: { theme:'dark', y:{ formatter: v => v.toLocaleString('pt-BR') } },
+  });
+}
+
+function renderMetaAdsTopAds(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const maxV = Math.max(...RELATORIOS.meta_ads.top_anuncios.map(a => a.valor));
+  el.innerHTML = RELATORIOS.meta_ads.top_anuncios.map((a, i) => {
+    const pct = ((a.valor / maxV) * 100).toFixed(0);
+    const pos = i+1;
+    const cl  = pos===1?'gold':pos===2?'silver':pos===3?'bronze':'';
+    return `<div class="item-rank">
+      <div class="item-pos ${cl}">${pos}</div>
+      <div class="item-info">
+        <div class="item-nm">${a.nome}</div>
+        <div class="item-cat">${a.impressoes.toLocaleString('pt-BR')} impressões · ${a.cliques} cliques</div>
+      </div>
+      <div class="item-stats">
+        <div class="item-val" style="color:var(--red-a);">${fmt(a.valor)}</div>
+        <div class="item-ped">${pct}% do total</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMetaAdsTabela(tbodyId) {
+  const tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  tbody.innerHTML = RELATORIOS.meta_ads.por_mes.map(m => {
+    const cpm = m.impressoes ? (m.valor_total / m.impressoes * 1000) : 0;
+    const cpc = m.cliques    ? (m.valor_total / m.cliques) : 0;
+    return `<tr>
+      <td style="font-weight:800;white-space:nowrap;">${m.label}</td>
+      <td style="color:var(--red-a);font-weight:800;">${fmt(m.valor_total)}</td>
+      <td>${m.impressoes.toLocaleString('pt-BR')}</td>
+      <td>${m.cliques.toLocaleString('pt-BR')}</td>
+      <td style="color:var(--gold);">R$ ${cpm.toFixed(2)}</td>
+      <td style="color:#a78bfa;">R$ ${cpc > 0 ? cpc.toFixed(2) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderTrafego() {
+  // KPIs Meta Ads na página Tráfego
+  renderMetaAdsKpis('tf-meta-kpis', 'resumo');
+  renderMetaAdsCharts();
+  renderMetaAdsTopAds('tf-top-ads');
+  renderMetaAdsTabela('tf-mes-tbody');
+
+  // Lançamentos manuais
+  const tfR = DB.get('trafego', []);
+  const total = tfR.reduce((a,r)=>a+(r.total||0),0);
+  const data = getControleData();
+  const rec = sumField(data,'total');
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setText('tf-total', fmt(total));
+  const totPed = tfR.reduce((a,r)=>a+(r.pedidos||0),0);
+  if (total > 0 && totPed > 0) {
+    setText('tf-cpv', fmt(total / totPed));
+    setText('tf-roi', ((rec * 0.4) / total).toFixed(1)+'×');
+  } else { setText('tf-cpv','—'); setText('tf-roi','—'); }
+  renderTrafegoHist();
+}
+
+function renderMetaAds() {
+  renderMetaAdsKpis('meta-kpis-full', 'full');
+
+  const ma = RELATORIOS.meta_ads;
+  const labels = ma.por_mes.map(m => m.label);
+
+  renderChart('metaGastoChart', {
+    series: [{ name: 'Gasto (R$)', data: ma.por_mes.map(m => parseFloat(m.valor_total.toFixed(2))) }],
+    chart: { ...CHART_DEFAULTS, type:'bar', height:230 },
+    colors: ['#1877F2'],
+    plotOptions: { bar: { borderRadius:6, columnWidth:'50%' } },
+    dataLabels: { enabled:true, style:{colors:['#fff'], fontWeight:'700', fontSize:'10px'}, formatter: v => 'R$'+v.toFixed(0) },
+    xaxis: { categories:labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show:false },
+    grid: GRID_OPT,
+    tooltip: { theme:'dark', y:{ formatter: v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2}) } },
+  });
+
+  renderChart('metaCliquesChart', {
+    series: [
+      { name:'Cliques', data: ma.por_mes.map(m => m.cliques) },
+      { name:'Alcance (/100)', data: ma.por_mes.map(m => Math.round(m.alcance/100)) },
+    ],
+    chart: { ...CHART_DEFAULTS, type:'bar', height:230 },
+    colors: ['#8BA4B9','#DAAA3C'],
+    plotOptions: { bar: { borderRadius:5, columnWidth:'65%', grouped:true } },
+    dataLabels: { enabled:false },
+    xaxis: { categories:labels, axisBorder:{show:false}, axisTicks:{show:false}, labels:{style:AXIS_STYLE} },
+    yaxis: { show:false },
+    grid: GRID_OPT,
+    legend: { labels:{colors:'#b09490'}, fontSize:'10px' },
+    tooltip: { theme:'dark', y:{ 
+      formatter: (v, {seriesIndex}) => seriesIndex === 1
+        ? (v*100).toLocaleString('pt-BR')+' pessoas'
+        : v.toLocaleString('pt-BR')+' cliques'
+    } },
+  });
+
+  renderMetaAdsTopAds('meta-top-ads-full');
+
+  // Tabela de eficiência
+  const tbody = document.getElementById('meta-efic-tbody');
+  if (tbody) {
+    tbody.innerHTML = ma.por_mes.map(m => {
+      const cpm = m.impressoes ? (m.valor_total / m.impressoes * 1000) : 0;
+      const cpc = m.cliques    ? (m.valor_total / m.cliques) : 0;
+      return `<tr>
+        <td style="font-weight:800;white-space:nowrap;">${m.label}</td>
+        <td style="color:var(--red-a);font-weight:800;">${fmt(m.valor_total)}</td>
+        <td>${m.impressoes.toLocaleString('pt-BR')}</td>
+        <td>${m.cliques.toLocaleString('pt-BR')}</td>
+        <td style="color:var(--gold);">R$ ${cpm.toFixed(2)}</td>
+        <td style="color:#a78bfa;">R$ ${cpc > 0 ? cpc.toFixed(2) : '—'}</td>
+        <td style="color:var(--green-s);">${m.alcance.toLocaleString('pt-BR')}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Objetivos / Indicadores
+  const objEl = document.getElementById('meta-objetivos');
+  if (objEl) {
+    const total = ma.objetivos.reduce((s,o) => s+o.resultados, 0);
+    objEl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;">` +
+      ma.objetivos.map(o => {
+        const pct = total ? ((o.resultados/total)*100).toFixed(0) : 0;
+        return `<div style="padding:18px 20px;border-right:1px solid var(--border);">
+          <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;">${o.tipo}</div>
+          <div style="font-size:24px;font-weight:900;color:${o.cor};margin-bottom:4px;">${o.resultados.toLocaleString('pt-BR')}</div>
+          <div style="font-size:10px;font-weight:600;color:var(--muted);">resultados · ${pct}% do total</div>
+          <div class="prog-track" style="margin-top:8px;"><div class="prog-fill" style="width:${pct}%;background:${o.cor};"></div></div>
+        </div>`;
+      }).join('') + `</div>`;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RENDER ALL
+══════════════════════════════════════════ */
+function renderAll() {
+  const activePage = document.querySelector('.page.active')?.id?.replace('page-','');
+  if (!activePage) return;
+  if (activePage === 'inicio')          renderInicio();
+  if (activePage === 'controle')        renderControle();
+  if (activePage === 'pagamentos')      renderPagamentos();
+  if (activePage === 'ifood-overview')  renderIfoodOverview();
+  if (activePage === 'cardapio')        renderCardapio();
+  if (activePage === 'logistica')       renderLogistica();
+  if (activePage === 'ocorrencias')     renderOcorrencias();
+  if (activePage === 'lancar')          renderExtrato();
+  if (activePage === 'trafego')         renderTrafego();
+  if (activePage === 'meta-ads')        renderMetaAds();
+  if (activePage === 'caixa')           renderCaixa();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+initDateTime();
+// Esconder filter-bar por padrão (aparece apenas em páginas relevantes)
+document.getElementById('filter-bar').style.display = 'flex';
+renderAll();
 </script>
 </body>
 </html>
