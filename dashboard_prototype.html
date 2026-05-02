@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Caminho do Dendê — Protótipo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: #F3F4F6; color: #1F2937; line-height: 1.5;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 440px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.08); }
+  .top {
+    background: linear-gradient(135deg, #C00000 0%, #8B0000 100%);
+    color: #fff; padding: 22px 20px 18px; position: relative;
+  }
+  .top h1 { font-size: 18px; font-weight: 700; }
+  .top .sub { font-size: 13px; opacity: 0.9; margin-top: 2px; }
+  .menu-btn {
+    position: absolute; top: 22px; right: 18px; font-size: 22px; cursor: pointer;
+    background: rgba(255,255,255,0.15); width: 36px; height: 36px;
+    border-radius: 8px; display:flex; align-items:center; justify-content:center;
+  }
+  .prot-banner {
+    background: #F2C200; color: #1F2937; padding: 8px 14px;
+    text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  nav.tabs {
+    display: flex; overflow-x: auto; background: #fff; border-bottom: 1px solid #E5E7EB;
+    padding: 0 8px;
+  }
+  nav.tabs button {
+    background: none; border: none; padding: 14px 16px; font-size: 13px;
+    font-weight: 600; color: #6B7280; cursor: pointer; white-space: nowrap;
+    border-bottom: 3px solid transparent; font-family: inherit;
+  }
+  nav.tabs button.active { color: #C00000; border-color: #C00000; }
+  .page { padding: 20px; display: none; }
+  .page.active { display: block; }
+
+  /* Home */
+  .greeting { margin-bottom: 20px; }
+  .greeting h2 { font-size: 22px; font-weight: 700; }
+  .greeting p { color: #6B7280; font-size: 14px; margin-top: 4px; }
+
+  .hero-kpi {
+    background: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
+    color: #fff; border-radius: 16px; padding: 24px; margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(22,163,74,0.3);
+  }
+  .hero-kpi.red { background: linear-gradient(135deg, #C00000 0%, #8B0000 100%); box-shadow: 0 4px 20px rgba(192,0,0,0.3); }
+  .hero-kpi .label {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    opacity: 0.9; margin-bottom: 8px;
+  }
+  .hero-kpi .value { font-size: 40px; font-weight: 800; letter-spacing: -1px; }
+  .hero-kpi .delta { font-size: 13px; opacity: 0.95; margin-top: 6px; }
+
+  .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .kpi-sm { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; }
+  .kpi-sm .label { font-size: 10px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; }
+  .kpi-sm .value { font-size: 22px; font-weight: 700; margin-top: 2px; color: #1F2937; }
+  .kpi-sm .sub { font-size: 11px; color: #6B7280; margin-top: 2px; }
+
+  .section { margin-top: 22px; }
+  .section h3 {
+    font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+    color: #6B7280; margin-bottom: 10px; font-weight: 600;
+  }
+
+  .channel-row {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+    padding: 14px 18px; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .channel-row .ch-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .channel-row .ch-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #fff;
+  }
+  .ch-icon.balcao { background: #F2C200; color: #1F2937; }
+  .ch-icon.ifood { background: #EA1D2C; }
+  .ch-icon.insta { background: #8B5CF6; }
+  .ch-icon.wpp { background: #25D366; }
+  .channel-row .ch-stats { text-align: right; }
+  .channel-row .ch-stats .v { font-weight: 700; font-size: 16px; }
+  .channel-row .ch-stats .s { font-size: 11px; color: #6B7280; }
+
+  .alert {
+    background: #FEF3C7; border-left: 4px solid #F59E0B;
+    padding: 12px 14px; border-radius: 8px; margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .alert.red { background: #FEE2E2; border-color: #EF4444; }
+  .alert strong { display: block; margin-bottom: 2px; }
+
+  .chart-placeholder {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+    padding: 20px; height: 160px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 6px;
+  }
+  .bar {
+    flex: 1; background: linear-gradient(180deg, #C00000 0%, #8B0000 100%);
+    border-radius: 6px 6px 0 0; position: relative; min-height: 20px;
+  }
+  .bar .tip { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #6B7280; white-space: nowrap; }
+  .bar .lb { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #6B7280; }
+
+  .quick-actions { margin-top: 28px; display: grid; gap: 8px; }
+  .quick-actions button {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 12px;
+    padding: 14px 18px; text-align: left; font-size: 14px; font-weight: 600;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-family: inherit; color: #1F2937;
+  }
+  .quick-actions button:hover { background: #F9FAFB; }
+  .quick-actions button .arrow { color: #C00000; font-weight: 700; }
+
+  /* Financeiro */
+  .tx-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .tx {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 10px;
+    padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .tx .meta { font-size: 11px; color: #6B7280; }
+  .tx .name { font-weight: 600; font-size: 14px; }
+  .tx .amt { font-weight: 700; font-size: 14px; }
+  .tx .amt.pos { color: #16A34A; }
+  .tx .amt.neg { color: #C00000; }
+
+  /* Vendas / produtos */
+  .product {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .product .rank { color: #C00000; font-weight: 800; margin-right: 10px; font-size: 14px; }
+  .product .pname { font-weight: 600; font-size: 14px; }
+  .product .pmeta { font-size: 11px; color: #6B7280; }
+  .product .pamt { font-weight: 700; color: #16A34A; font-size: 13px; }
+
+  /* Marketing */
+  .campaign {
+    background: #fff; border: 1px solid #E5E7EB; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 6px;
+  }
+  .campaign .cname { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .campaign .cmeta { display: flex; justify-content: space-between; font-size: 11px; color: #6B7280; }
+  .status-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .status-tag.escalar { background: #DCF2E1; color: #166534; }
+  .status-tag.monitorar { background: #FEF3C7; color: #92400E; }
+  .status-tag.pausar { background: #FEE2E2; color: #991B1B; }
+
+  footer.dash-foot {
+    padding: 30px 20px; text-align: center; font-size: 11px; color: #9CA3AF;
+    border-top: 1px solid #E5E7EB; margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="prot-banner">PROTÓTIPO — dados de exemplo · valida layout com a tia antes do dev real</div>
+  <div class="top">
+    <div class="menu-btn">☰</div>
+    <h1>Caminho do Dendê</h1>
+    <div class="sub">Painel de gestão · Sábado, 18 de abril</div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="home">Início</button>
+    <button class="tab-btn" data-tab="financeiro">Financeiro</button>
+    <button class="tab-btn" data-tab="vendas">Vendas</button>
+    <button class="tab-btn" data-tab="marketing">Marketing</button>
+    <button class="tab-btn" data-tab="operacao">Operação</button>
+  </nav>
+
+  <!-- ============ HOME ============ -->
+  <div class="page active" id="page-home">
+    <div class="greeting">
+      <h2>Boa tarde, tia! 🌞</h2>
+      <p>Aqui vai o resumo do seu restaurante agora.</p>
+    </div>
+
+    <div class="hero-kpi">
+      <div class="label">Caixa de Ontem</div>
+      <div class="value">R$ 1.847</div>
+      <div class="delta">▲ 12% vs. sexta passada</div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-sm">
+        <div class="label">Pedidos hoje</div>
+        <div class="value">47</div>
+        <div class="sub">até 14:35</div>
+      </div>
+      <div class="kpi-sm">
+        <div class="label">Receita hoje</div>
+        <div class="value">R$ 2.110</div>
+        <div class="sub">até 14:35</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Por canal (hoje)</h3>
+      <div class="channel-row">
+        <div class="ch-name"><div class="ch-icon balcao">🏠</div>Balcão</div>
+        <div class="ch-stats"><div class="v">28</div><div class="s">R$ 1.250</div></div>
+      </div>
+      <div class="channel-row">
+        <div class="ch-name"><div class="ch-icon ifood">🍽️</div>iFood</div>
+        <div class="ch-stats"><div class="v">15</div><div class="s">R$ 680</div></div>
+      </div>
+      <div class="channel-row">
+        <div class="ch-name"><div class="ch-icon insta">📱</div>Insta Delivery</div>
+        <div class="ch-stats"><div class="v">4</div><div class="s">R$ 180</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🚨 Atenção</h3>
+      <div class="alert red">
+        <strong>Gasto de embalagem 38% acima da média</strong>
+        Últimos 7 dias: R$ 420 vs. R$ 305 semana anterior.
+      </div>
+      <div class="alert">
+        <strong>3 notas fiscais pendentes de registro</strong>
+        Última nota registrada há 2h. Que tal atualizar?
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Esta semana</h3>
+      <div class="chart-placeholder">
+        <div class="bar" style="height: 45%;"><div class="lb">Seg</div></div>
+        <div class="bar" style="height: 62%;"><div class="lb">Ter</div></div>
+        <div class="bar" style="height: 38%;"><div class="lb">Qua</div></div>
+        <div class="bar" style="height: 71%;"><div class="lb">Qui</div></div>
+        <div class="bar" style="height: 85%;"><div class="lb">Sex</div></div>
+        <div class="bar" style="height: 95%;"><div class="tip">R$ 2.3k</div><div class="lb">Sáb</div></div>
+        <div class="bar" style="height: 40%; opacity: 0.4;"><div class="lb">Dom</div></div>
+      </div>
+      <p style="text-align:center; margin-top:28px; font-size:12px; color:#6B7280;">Receita diária — R$ últimos 7 dias</p>
+    </div>
+
+    <div class="section quick-actions">
+      <h3 style="color:#6B7280;">Ações rápidas</h3>
+      <button>📝 Registrar fechamento do caixa <span class="arrow">→</span></button>
+      <button>📷 Mandar nota fiscal no WhatsApp <span class="arrow">→</span></button>
+      <button>📊 Ver campanhas Meta <span class="arrow">→</span></button>
+      <button>💬 Falar com o Matheus <span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <!-- ============ FINANCEIRO ============ -->
+  <div class="page" id="page-financeiro">
+    <div class="greeting"><h2>Financeiro</h2><p>Entradas e saídas do mês até agora.</p></div>
+
+    <div class="kpi-row">
+      <div class="kpi-sm">
+        <div class="label">Receita Abril</div>
+        <div class="value" style="color:#16A34A;">R$ 38.420</div>
+        <div class="sub">até hoje</div>
+      </div>
+      <div class="kpi-sm">
+        <div class="label">Despesas Abril</div>
+        <div class="value" style="color:#C00000;">R$ 28.310</div>
+        <div class="sub">até hoje</div>
+      </div>
+    </div>
+
+    <div class="hero-kpi" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
+      <div class="label">Margem Operacional do Mês</div>
+      <div class="value">R$ 10.110</div>
+      <div class="delta">26% de margem · Meta do mês: R$ 12.000</div>
+    </div>
+
+    <div class="section">
+      <h3>Últimas transações</h3>
+      <div class="tx-list">
+        <div class="tx">
+          <div><div class="name">Venda iFood</div><div class="meta">Hoje · 14:22</div></div>
+          <div class="amt pos">+ R$ 84,00</div>
+        </div>
+        <div class="tx">
+          <div><div class="name">Atacadão Fartura — Hortifruti</div><div class="meta">Hoje · 10:15 · via bot</div></div>
+          <div class="amt neg">− R$ 487,30</div>
+        </div>
+        <div class="tx">
+          <div><div class="name">Venda Balcão (fechamento ontem)</div><div class="meta">Ontem · 22:30</div></div>
+          <div class="amt pos">+ R$ 1.847,00</div>
+        </div>
+        <div class="tx">
+          <div><div class="name">Conta de energia</div><div class="meta">Ontem · 18:40 · via bot</div></div>
+          <div class="amt neg">− R$ 620,00</div>
+        </div>
+        <div class="tx">
+          <div><div class="name">Salário — Dona Creide</div><div class="meta">15/04 · PIX</div></div>
+          <div class="amt neg">− R$ 1.800,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VENDAS ============ -->
+  <div class="page" id="page-vendas">
+    <div class="greeting"><h2>Vendas</h2><p>Ranking de pratos · últimos 30 dias.</p></div>
+
+    <div class="kpi-row">
+      <div class="kpi-sm">
+        <div class="label">Pedidos 30d</div>
+        <div class="value">1.284</div>
+      </div>
+      <div class="kpi-sm">
+        <div class="label">Ticket médio</div>
+        <div class="value">R$ 48</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Top 10 pratos do mês</h3>
+      <div class="product">
+        <div><span class="rank">#1</span><span class="pname">Moqueca de Peixe</span><div class="pmeta">187 vendas · ticket R$ 62</div></div>
+        <div class="pamt">R$ 11.594</div>
+      </div>
+      <div class="product">
+        <div><span class="rank">#2</span><span class="pname">Vatapá com Camarão</span><div class="pmeta">156 vendas · ticket R$ 58</div></div>
+        <div class="pamt">R$ 9.048</div>
+      </div>
+      <div class="product">
+        <div><span class="rank">#3</span><span class="pname">Acarajé (unidade)</span><div class="pmeta">412 vendas · ticket R$ 18</div></div>
+        <div class="pamt">R$ 7.416</div>
+      </div>
+      <div class="product">
+        <div><span class="rank">#4</span><span class="pname">Bobó de Camarão</span><div class="pmeta">118 vendas · ticket R$ 55</div></div>
+        <div class="pamt">R$ 6.490</div>
+      </div>
+      <div class="product">
+        <div><span class="rank">#5</span><span class="pname">Feijoada Baiana</span><div class="pmeta">97 vendas · ticket R$ 52</div></div>
+        <div class="pamt">R$ 5.044</div>
+      </div>
+      <div class="product">
+        <div><span class="rank">#6</span><span class="pname">Caruru</span><div class="pmeta">82 vendas · ticket R$ 45</div></div>
+        <div class="pamt">R$ 3.690</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MARKETING ============ -->
+  <div class="page" id="page-marketing">
+    <div class="greeting"><h2>Marketing</h2><p>Campanhas Meta Ads · últimos 30 dias.</p></div>
+
+    <div class="hero-kpi red">
+      <div class="label">ROI Meta Ads (estimado)</div>
+      <div class="value">3,2×</div>
+      <div class="delta">Cada R$ 1 investido retorna R$ 3,20 em vendas</div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-sm">
+        <div class="label">Gasto 30d</div>
+        <div class="value">R$ 0</div>
+        <div class="sub">campanhas paradas</div>
+      </div>
+      <div class="kpi-sm">
+        <div class="label">Orçamento plan.</div>
+        <div class="value">R$ 1.500</div>
+        <div class="sub">próximo mês</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Criativos — veredicto</h3>
+      <div class="campaign">
+        <div class="cname">Você Já Provou (Interação)</div>
+        <div class="cmeta">
+          <span>CPR R$ 0,0073 · 1.088 resultados</span>
+          <span class="status-tag escalar">Escalar</span>
+        </div>
+      </div>
+      <div class="campaign">
+        <div class="cname">Foodporn Moqueca (Carrossel)</div>
+        <div class="cmeta">
+          <span>CPR R$ 1,50 · 154 resultados</span>
+          <span class="status-tag escalar">Escalar</span>
+        </div>
+      </div>
+      <div class="campaign">
+        <div class="cname">Reels Desconto Grupos</div>
+        <div class="cmeta">
+          <span>Sem dados · starvation</span>
+          <span class="status-tag monitorar">Reativar</span>
+        </div>
+      </div>
+      <div class="campaign">
+        <div class="cname">Estático 27/10</div>
+        <div class="cmeta">
+          <span>CPR R$ 102,01 · 1 resultado</span>
+          <span class="status-tag pausar">Pausar</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OPERAÇÃO ============ -->
+  <div class="page" id="page-operacao">
+    <div class="greeting"><h2>Operação</h2><p>Pedidos do dia em tempo real.</p></div>
+
+    <div class="kpi-row">
+      <div class="kpi-sm">
+        <div class="label">Em preparo</div>
+        <div class="value" style="color:#F59E0B;">6</div>
+      </div>
+      <div class="kpi-sm">
+        <div class="label">Saiu p/ entrega</div>
+        <div class="value" style="color:#3B82F6;">3</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Pedidos ativos</h3>
+      <div class="tx">
+        <div><div class="name">#2847 · Moqueca + Acarajé</div><div class="meta">iFood · em preparo 18 min</div></div>
+        <div class="amt">R$ 78</div>
+      </div>
+      <div class="tx">
+        <div><div class="name">#2846 · Vatapá duplo</div><div class="meta">Insta Delivery · em preparo 12 min</div></div>
+        <div class="amt">R$ 116</div>
+      </div>
+      <div class="tx">
+        <div><div class="name">#2845 · Bobó de Camarão</div><div class="meta">iFood · saiu pra entrega</div></div>
+        <div class="amt">R$ 55</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="dash-foot">
+    Protótipo navegável · v0.1 · Caminho do Dendê<br>
+    Spec completa em Dashboard_Gestao_Especificacao.md
+  </footer>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(b => b.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + b.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }));
+</script>
+
+</body>
+</html>

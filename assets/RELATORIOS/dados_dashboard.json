@@ -1,0 +1,508 @@
+{
+  "controle": [
+    {
+      "periodo": "Janeiro (01/01 a 31/01)",
+      "num_vendas": 130,
+      "valor_produtos": 10936.1,
+      "taxa_entrega": 386.9,
+      "taxa_garcom": 814.72,
+      "total": 12181.72,
+      "ticket_medio": 93.71,
+      "pag_credito": 6079.91,
+      "pag_debito": 3282.91,
+      "pag_pix": 2298.52,
+      "comandas_usadas": 86,
+      "pessoas_atendidas": 130,
+      "valor_pago": 8390.8,
+      "valor_aberto": 12,
+      "canceladas": 733.5,
+      "num_deliveries": 47,
+      "taxa_delivery": 501.93,
+      "vendas_delivery": 3024.22
+    },
+    {
+      "periodo": "Fevereiro (01/02 a 28/02)",
+      "num_vendas": 72,
+      "valor_produtos": 6878.06,
+      "taxa_entrega": 233.13,
+      "taxa_garcom": 395.19,
+      "total": 7547.63,
+      "ticket_medio": 104.83,
+      "pag_credito": 4289.77,
+      "pag_debito": 1145.94,
+      "pag_pix": 1910.62,
+      "comandas_usadas": 42,
+      "pessoas_atendidas": 73,
+      "valor_pago": 5172.6,
+      "valor_aberto": 12,
+      "canceladas": 357.6,
+      "num_deliveries": 31,
+      "taxa_delivery": 370.14,
+      "vendas_delivery": 2323.44
+    },
+    {
+      "periodo": "Março (01/03 a 31/03)",
+      "num_vendas": 72,
+      "valor_produtos": 6878.06,
+      "taxa_entrega": 233.13,
+      "taxa_garcom": 395.19,
+      "total": 7547.63,
+      "ticket_medio": 104.83,
+      "pag_credito": 4289.77,
+      "pag_debito": 1145.94,
+      "pag_pix": 1910.62,
+      "comandas_usadas": 42,
+      "pessoas_atendidas": 73,
+      "valor_pago": 5172.6,
+      "valor_aberto": 12,
+      "canceladas": 357.6,
+      "num_deliveries": 31,
+      "taxa_delivery": 370.14,
+      "vendas_delivery": 2323.44
+    },
+    {
+      "periodo": "Abril (01/04 a 19/04)",
+      "num_vendas": 76,
+      "valor_produtos": 7417.23,
+      "taxa_entrega": 210.87,
+      "taxa_garcom": 450.41,
+      "total": 8091.19,
+      "ticket_medio": 106.46,
+      "pag_credito": 4050.08,
+      "pag_debito": 1982.69,
+      "pag_pix": 1475.34,
+      "comandas_usadas": 57,
+      "pessoas_atendidas": 77,
+      "valor_pago": 5537,
+      "valor_aberto": 12,
+      "canceladas": 500.8,
+      "num_deliveries": 26,
+      "taxa_delivery": 274.84,
+      "vendas_delivery": 2260.15
+    }
+  ],
+  "ifood_vendas": {
+    "geral": [
+      {
+        "periodo": "18/02/2026 - 18/04/2026",
+        "servico": "App iFood",
+        "logistica": "Entrega parceira",
+        "total_vendas": 38,
+        "valor_total": 2777.64,
+        "taxa_entrega": 430.67999999999984,
+        "ticket_medio": 73.0957894736842,
+        "novos_clientes": 27
+      }
+    ],
+    "horarios": [
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "00h - 02h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "02h - 04h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "04h - 06h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "06h - 08h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "08h - 10h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "10h - 12h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "12h - 14h",
+        "total_vendas": 2
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "14h - 16h",
+        "total_vendas": 1
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "16h - 18h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "18h - 20h",
+        "total_vendas": 13
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "20h - 22h",
+        "total_vendas": 17
+      },
+      {
+        "periodo_tipo": "Final de semana",
+        "horario": "22h - 24h",
+        "total_vendas": 1
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "00h - 02h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "02h - 04h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "04h - 06h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "06h - 08h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "08h - 10h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "10h - 12h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "12h - 14h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "14h - 16h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "16h - 18h",
+        "total_vendas": 0
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "18h - 20h",
+        "total_vendas": 3
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "20h - 22h",
+        "total_vendas": 1
+      },
+      {
+        "periodo_tipo": "Durante a semana",
+        "horario": "22h - 24h",
+        "total_vendas": 0
+      }
+    ],
+    "pagamentos": [
+      {
+        "forma": "Crédito",
+        "total": 18
+      },
+      {
+        "forma": "PIX",
+        "total": 14
+      },
+      {
+        "forma": "NuPay",
+        "total": 2
+      },
+      {
+        "forma": "Dinheiro",
+        "total": 2
+      },
+      {
+        "forma": "Débito",
+        "total": 1
+      },
+      {
+        "forma": "Carteira digital",
+        "total": 1
+      }
+    ],
+    "dias": [
+      {
+        "dia": "Sábado",
+        "total": 20
+      },
+      {
+        "dia": "Sexta",
+        "total": 11
+      },
+      {
+        "dia": "Quinta",
+        "total": 4
+      },
+      {
+        "dia": "Domingo",
+        "total": 3
+      }
+    ]
+  },
+  "ifood_cardapio": {
+    "funil": [
+      {
+        "periodo": "18/02/2026 - 18/04/2026",
+        "visitas": 898,
+        "visualizacoes": 293,
+        "sacola": 86,
+        "revisao": 83,
+        "concluidos": 38,
+        "conversao": 4.23
+      }
+    ],
+    "itens": [
+      {
+        "nome": "Porção de acarajé.",
+        "categoria": "Em 1 categorias",
+        "visitas": 48,
+        "pedidos": 21,
+        "conversao": 43.75,
+        "qtd_vendida": 23,
+        "valor_total": 1265.0
+      },
+      {
+        "nome": "Acarajé completo.",
+        "categoria": "Em 1 categorias",
+        "visitas": 59,
+        "pedidos": 10,
+        "conversao": 16.95,
+        "qtd_vendida": 13,
+        "valor_total": 494.0
+      },
+      {
+        "nome": "Tapioca de frango cremoso.",
+        "categoria": "Em 1 categorias",
+        "visitas": 5,
+        "pedidos": 4,
+        "conversao": 80.0,
+        "qtd_vendida": 5,
+        "valor_total": 125.0
+      },
+      {
+        "nome": "Cuscuz de carne seca.",
+        "categoria": "Em 1 categorias",
+        "visitas": 8,
+        "pedidos": 3,
+        "conversao": 37.5,
+        "qtd_vendida": 4,
+        "valor_total": 124.0
+      },
+      {
+        "nome": "Guaraná Zero | Guaraná Antarctica",
+        "categoria": "Em 1 categorias",
+        "visitas": 1,
+        "pedidos": 3,
+        "conversao": 300.0,
+        "qtd_vendida": 4,
+        "valor_total": 36.0
+      },
+      {
+        "nome": "Acarajé sem camarão.",
+        "categoria": "Em 1 categorias",
+        "visitas": 3,
+        "pedidos": 2,
+        "conversao": 66.67,
+        "qtd_vendida": 2,
+        "valor_total": 72.0
+      },
+      {
+        "nome": "Coca-Cola Lata 350ml",
+        "categoria": "Em 1 categorias",
+        "visitas": 1,
+        "pedidos": 2,
+        "conversao": 200.0,
+        "qtd_vendida": 2,
+        "valor_total": 18.0
+      },
+      {
+        "nome": "Cuscuz de frango cremoso",
+        "categoria": "Em 1 categorias",
+        "visitas": 3,
+        "pedidos": 2,
+        "conversao": 66.67,
+        "qtd_vendida": 2,
+        "valor_total": 58.0
+      },
+      {
+        "nome": "Feijoada baiana (Média)",
+        "categoria": "Em 1 categorias",
+        "visitas": 1,
+        "pedidos": 1,
+        "conversao": 100.0,
+        "qtd_vendida": 1,
+        "valor_total": 100.0
+      },
+      {
+        "nome": "Sprite 350ml",
+        "categoria": "Em 1 categorias",
+        "visitas": 0,
+        "pedidos": 1,
+        "conversao": 0,
+        "qtd_vendida": 1,
+        "valor_total": 9.0
+      }
+    ]
+  },
+  "ifood_logistica": [
+    {
+      "id_curto": "6122",
+      "data": "2026-04-12 12:26:50",
+      "turno": "ALMOCO",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 6.83,
+      "tempo_alocacao": 7.28,
+      "tempo_entrega_km": 0.05,
+      "tempo_prometido": 42.0,
+      "tempo_realizado": 19.58,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "0548",
+      "data": "2026-04-16 19:13:29",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 20.47,
+      "tempo_alocacao": 5.35,
+      "tempo_entrega_km": 11.88,
+      "tempo_prometido": 39.0,
+      "tempo_realizado": 30.08,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "1649",
+      "data": "2026-04-17 20:06:08",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 14.62,
+      "tempo_alocacao": 0.77,
+      "tempo_entrega_km": 12.67,
+      "tempo_prometido": 30.0,
+      "tempo_realizado": 21.33,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "4974",
+      "data": "2026-04-18 21:19:36",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 16.28,
+      "tempo_alocacao": 5.52,
+      "tempo_entrega_km": 9.42,
+      "tempo_prometido": 39.0,
+      "tempo_realizado": 27.08,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "6599",
+      "data": "2026-04-18 20:23:08",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 25.35,
+      "tempo_alocacao": 6.23,
+      "tempo_entrega_km": 15.72,
+      "tempo_prometido": 40.0,
+      "tempo_realizado": 37.17,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "3225",
+      "data": "2026-04-18 20:25:59",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 16.92,
+      "tempo_alocacao": 1.43,
+      "tempo_entrega_km": 14.07,
+      "tempo_prometido": 25.0,
+      "tempo_realizado": 21.42,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "6912",
+      "data": "2026-04-18 21:04:02",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 11.18,
+      "tempo_alocacao": 5.72,
+      "tempo_entrega_km": 1.18,
+      "tempo_prometido": 28.0,
+      "tempo_realizado": 15.37,
+      "tempo_atraso": 0
+    },
+    {
+      "id_curto": "7512",
+      "data": "2026-04-18 20:15:42",
+      "turno": "JANTAR",
+      "servico": "FULL_SERVICE",
+      "status": "CONCLUÍDO",
+      "motivo_cancel": "",
+      "tempo_preparo": 15.77,
+      "tempo_alocacao": 7.5,
+      "tempo_entrega_km": 4.55,
+      "tempo_prometido": 37.0,
+      "tempo_realizado": 28.35,
+      "tempo_atraso": 0
+    }
+  ],
+  "ifood_cancelamentos": [
+    {
+      "id_pedido": "6872",
+      "data": "2026-03-26 21:29:53",
+      "turno": "JANTAR",
+      "status": "CANCELADO",
+      "motivo": "PROBLEMAS DE SISTEMA NA LOJA",
+      "valor_pedido": 96.0,
+      "origem": "LOJA"
+    }
+  ],
+  "ifood_negociacoes": [
+    {
+      "id_pedido": "6447",
+      "data": "04/04/2026 19:19",
+      "turno": "JANTAR",
+      "status": "CONCLUIDO",
+      "valor_pedido": 62.98,
+      "motivo": "FALTOU INSERIR INFORMAÇÕES NO PEDIDO",
+      "quem_iniciou": "CLIENTE",
+      "resposta_loja": "RECUSOU A SOLICITAÇÃO",
+      "valor_cupom": 0,
+      "valor_reembolso": 0
+    }
+  ]
+}
